@@ -19,7 +19,6 @@ get_instance_ip()
 		echo $IP_ADDR
 		return 0
 	else
-		echo "NO_IP_FOUND"
 		return 1
 	fi
 }
@@ -37,7 +36,7 @@ upgrade()
 	RELEASE_RPM_URL=$1
 	IP=$1
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "sudo rpm -Uhv $RELEASE_RPM_URL"
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo yum update "*kaltura*"'
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo yum -y update "*kaltura*"'
 }
 
 install_kalt()
@@ -46,12 +45,14 @@ install_kalt()
 	INSTID=$2
 #ami-65fefd0c
 	ID=`start_instances $INSTID`
+	sleep 10
 	IP=`get_instance_ip $ID`
+	if [ -z "$IP" ];then return 1;fi
 	STATUS=0
 	while ! get_instance_status $ID ;do
 		sleep 45
 	done
 	echo "Machine up and running.. SSHing."
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "sudo rpm -Uhv $RELEASE_RPM_URL"
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo yum update kaltura-server'
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo yum -y install kaltura-server'
 }
