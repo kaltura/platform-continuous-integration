@@ -1,0 +1,27 @@
+start_instances()
+{
+	MODE=$1
+	
+	for IMAGE in $IMAGE_TYPES;do
+	    ec2-run-instances $IMAGE.$MODE -n 1 -k ~jess/downloads/jess.pem --availability-zone us-east-1a
+	done
+}
+get_instance_ip()
+{
+	INSTID=$1
+	IP_ADDR=`ec2-describe-instances $INSTID  | grep -o -P "\d+\.\d+\.\d+\.\d+" | grep -v '^10\.'`
+	if [ -n "$IP_ADDR" ];then
+		echo $IP_ADDR
+		return 0
+	else
+		echo "NO_IP_FOUND"
+		return 1
+	fi
+}
+
+upgrade()
+{
+	IP=$1
+	ssh $IP rpm -Uhv $RELEASE_RPM_URL -i$PEM_CRT
+	ssh $IP yum update "*kaltura*" -i$PEM_CRT
+}
