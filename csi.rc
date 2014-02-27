@@ -1,4 +1,6 @@
-PEM_CRT=/home/csi/csi.pem
+AV_ZONE=us-east-1a
+PEM_CRT=csi
+PEM_CRT_PATH=~/csi.pem
 SECRETS_PATH=~/.amzsecrets
 . $SECRETS_PATH
 IMAGE_TYPES="BATCH0 BATCH1 SPHINX0 SPHINX1 FRONT0 FRONT1 ADMINCONSOLE0 ADMINCONSOLE1 LB MYSQL"
@@ -7,6 +9,7 @@ STABLE_RELEASE_RPM_URL="$REPO_URL/stable/RPMS/noarch/kaltura-release.noarch.rpm"
 NIGHTLY_RELEASE_RPM_URL="$REPO_URL/nightly/RPMS/noarch/kaltura-release.noarch.rpm"
 UNIT_TESTS_REPO=""
 EC2_HOME=/usr/local/ec2-api
+EC2_USR=ec2-user
 EC2_URL="https://ec2.us-east-1.amazonaws.com:443"
 PATH=$PATH:$EC2_HOME/bin
 JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64

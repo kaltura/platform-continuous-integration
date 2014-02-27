@@ -1,10 +1,15 @@
 start_instances()
 {
-	MODE=$1
+	IMAGE=$1
 	
-	for IMAGE in $IMAGE_TYPES;do
-	    ec2-run-instances $IMAGE.$MODE -n 1 -k ~jess/downloads/jess.pem --availability-zone us-east-1a
-	done
+	#for IMAGE in $IMAGE_TYPES;do
+		INSTID=`ec2-run-instances $IMAGE -n 1 -k $PEM_CRT --availability-zone $AV_ZONE | grep INSTANCE |awk -F " " '{print $2}'`
+	   	if [ -n "$INSTID" ];then
+			echo $INSTID
+			return 0
+		fi
+		return 1
+	#done
 }
 get_instance_ip()
 {
@@ -19,9 +24,34 @@ get_instance_ip()
 	fi
 }
 
+get_instance_status()
+{
+	INSTID=$1
+	if ec2-describe-instance-status |grep $INSTID|grep -q "ok\s*ok\s*active";then
+		return 0
+	fi
+	return 1
+}
 upgrade()
 {
+	RELEASE_RPM_URL=$1
 	IP=$1
-	ssh $IP rpm -Uhv $RELEASE_RPM_URL -i$PEM_CRT
-	ssh $IP yum update "*kaltura*" -i$PEM_CRT
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "sudo rpm -Uhv $RELEASE_RPM_URL"
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo yum update "*kaltura*"'
+}
+
+install_kalt()
+{
+	RELEASE_RPM_URL=$1
+	INSTID=$2
+#ami-65fefd0c
+	ID=`start_instances $INSTID`
+	IP=`get_instance_ip $ID`
+	STATUS=0
+	while ! get_instance_status $ID ;do
+		sleep 45
+	done
+	echo "Machine up and running.. SSHing."
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "sudo rpm -Uhv $RELEASE_RPM_URL"
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo yum update kaltura-server'
 }
