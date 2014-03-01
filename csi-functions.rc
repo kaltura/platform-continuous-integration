@@ -1,7 +1,8 @@
+. ~/csi/csi.rc
 start_instances()
 {
 	IMAGE=$1
-	
+	INSTS_AMOUNT=$2
 	#for IMAGE in $IMAGE_TYPES;do
 		INSTID=`ec2-run-instances $IMAGE -n 1 -k $PEM_CRT --availability-zone $AV_ZONE | grep INSTANCE |awk -F " " '{print $2}'`
 	   	if [ -n "$INSTID" ];then
@@ -26,25 +27,37 @@ get_instance_ip()
 get_instance_status()
 {
 	INSTID=$1
-	if ec2-describe-instance-status |grep $INSTID|grep -q "ok\s*ok\s*active";then
+	if ec2-describe-instance-status $INSTID|grep -q "ok\s*ok\s*active";then
 		return 0
 	fi
 	return 1
 }
-upgrade()
+
+install_release_file()
 {
-	RELEASE_RPM_URL=$1
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo rpm -Uhv $RELEASE_RPM_URL"
+}
+upgrade_kalt()
+{
 	IP=$1
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "sudo rpm -Uhv $RELEASE_RPM_URL"
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo yum -y update "*kaltura*"'
+	RELEASE_RPM_URL=$2
+	install_release_file
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS 'sudo yum -y update "*kaltura*"'
+}
+
+selinux_set_permissive()
+{
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo setenforce permissive"
 }
 
 install_kalt()
 {
 	RELEASE_RPM_URL=$1
 	INSTID=$2
+	INSTS_AMOUNT=$3
+
 #ami-65fefd0c
-	ID=`start_instances $INSTID`
+	ID=`start_instances $INSTID $INSTS_AMOUNT`
 	sleep 10
 	IP=`get_instance_ip $ID`
 	if [ -z "$IP" ];then return 1;fi
@@ -53,6 +66,7 @@ install_kalt()
 		sleep 45
 	done
 	echo "Machine up and running.. SSHing."
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "sudo rpm -Uhv $RELEASE_RPM_URL"
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo yum -y install kaltura-server'
+	selinux_set_permissive
+	install_release_file
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS 'sudo yum -y install kaltura-server'
 }
