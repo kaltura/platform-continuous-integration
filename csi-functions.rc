@@ -3,14 +3,19 @@ start_instances()
 {
 	IMAGE=$1
 	INSTS_AMOUNT=$2
-	#for IMAGE in $IMAGE_TYPES;do
-		INSTID=`ec2-run-instances $IMAGE -n 1 -k $PEM_CRT --availability-zone $AV_ZONE | grep INSTANCE |awk -F " " '{print $2}'`
+		INSTID=`ec2-run-instances $IMAGE -n $INSTS_AMOUNT -k $PEM_CRT --availability-zone $AV_ZONE | grep INSTANCE |awk -F " " '{print $2}'`
 	   	if [ -n "$INSTID" ];then
 			echo $INSTID
 			return 0
 		fi
 		return 1
-	#done
+}
+
+term_instance()
+{
+	INSTID=$1
+	return ec2-terminate-instances $INSTID
+	
 }
 get_instance_ip()
 {
@@ -50,7 +55,7 @@ selinux_set_permissive()
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo setenforce permissive"
 }
 
-install_kalt()
+install_kalt_allin1()
 {
 	RELEASE_RPM_URL=$1
 	INSTID=$2
@@ -63,10 +68,11 @@ install_kalt()
 	if [ -z "$IP" ];then return 1;fi
 	STATUS=0
 	while ! get_instance_status $ID ;do
+		echo "Waiting for instance to init.."
 		sleep 45
 	done
 	echo "Machine up and running.. SSHing."
 	selinux_set_permissive
 	install_release_file
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS 'sudo yum -y install kaltura-server'
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo yum -y install $META_PACKAGE_NAME"
 }

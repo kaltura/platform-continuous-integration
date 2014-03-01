@@ -4,6 +4,7 @@ PEM_CRT_PATH=~/csi.pem
 SECRETS_PATH=~/.amzsecrets
 . $SECRETS_PATH
 SSH_QUIET_OPTS="-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+META_PACKAGE_NAME="kaltura-server"
 IMAGE_TYPES="BATCH0 BATCH1 SPHINX0 SPHINX1 FRONT0 FRONT1 ADMINCONSOLE0 ADMINCONSOLE1 LB MYSQL"
 REPO_URL="http://54.211.235.142/releases"
 STABLE_RELEASE_RPM_URL="$REPO_URL/stable/RPMS/noarch/kaltura-release.noarch.rpm"
