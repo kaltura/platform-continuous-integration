@@ -75,4 +75,9 @@ install_kalt_allin1()
 	selinux_set_permissive
 	install_release_file
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo yum -y install $META_PACKAGE_NAME"
+	echo "hi"
+	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS `dirname $0`/all1in.ans $EC2_USR@$IP:/tmp
+	echo "hi again"
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo /opt/kaltura/bin/kaltura-config-all.sh /tmp/all1in.ans"
+	echo "hi once more"
 }
