@@ -88,9 +88,9 @@ install_kalt_allin1()
 install_mysql_db()
 {
 	ANS_FILE=mysql.template.ans
-	INSTID=$MY_SQL_INST_ID
+	MY_SQL_INSTID=$MY_SQL_INST_ID
 	INSTS_AMOUNT=$1
-	ID=`start_instances $INSTID $INSTS_AMOUNT $SECURITY_GROUP`
+	ID=`start_instances $MY_SQL_INSTID $INSTS_AMOUNT $SECURITY_GROUP`
 	sleep 10
 	IP=`get_instance_ip $ID`
 	if [ -z "$IP" ];then return 1;fi
