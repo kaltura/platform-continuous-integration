@@ -109,17 +109,28 @@ Nightly testing should run a complete regression coverage via API client libs, v
 
 ## The Reports
 
+#### Execution Time Benchmarks
+For each step in the CI cycle, execution time measurements will be performed and saved in order to analyze platform trends over time. The following CI steps will measured:
+
+1. Time it took to pull the code from git repositories.
+1. Time it took to build packages.
+1. Time it took to push packages to install repositories.
+1. Time it took to install each package on the test clusters (clean and upgrade).
+1. Time it took to run post-inst scripts per package.
+1. Time to run each unit-test.
+1. Aggregate time from pulling code till finish tests (complete cycle).
+
 #### Web Reports
 
 * Full test report available on a URL with the version-date combo.
 * Header should show overall health status of the build - Percentage of fail/pass
 * Per test, status (FAILED or PASSED), and if failed, show unit test error output. According to the following table:
 
-| Test File     | Status        | Details                           |
-|:-------------:|:-------------:|:---------------------------------:|
-| test_xxx      | PASSED        |                                   |
-| test_yyy      | PASSED        |                                   |
-| test_zzz      | FAILED        | Output of what failed in the test |
+| Test File     | Status        | Execution Time  | Details                           |
+|:-------------:|:-------------:|:---------------:|:---------------------------------:|
+| test_xxx      | PASSED        | 12ms            |                                   |
+| test_yyy      | PASSED        | 100ms           |                                   |
+| test_zzz      | FAILED        | 876912ms        | Output of what failed in the test |
 
 #### Email Reports
 Setup a mailing list for people to subscribe for reports via email. 3 types of emails:
