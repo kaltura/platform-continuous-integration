@@ -1,0 +1,7 @@
+# will call create_partner.php and then setup utils.rc to reflect partner and secret
+. utils.rc
+MON_PARTNER=`setup_partner.sh` $SERVICEURL
+
+# upload test based on what is in utils.rc
+upload_test.php
+
