@@ -117,7 +117,7 @@ Setup a mailing list for people to subscribe for reports via email. 3 types of e
 The body of the email will always be a full report of the test suite in the following table: 
 
 | Test File     | Status        | Details                           |
-| ------------- |:-------------:| ---------------------------------:|
+|:-------------:|:-------------:|:---------------------------------:|
 | test_xxx      | PASSED        |                                   |
 | test_yyy      | PASSED        |                                   |
 | test_zzz      | FAILED        | Output of what failed in the test |
