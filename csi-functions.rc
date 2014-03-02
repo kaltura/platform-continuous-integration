@@ -1,9 +1,13 @@
-. ~/csi/csi.rc
+if [ -r ~/platform-continuous-integration/csi.rc ];then
+. ~/platform-continuous-integration/csi.rc
+else
+	echo "where is csi.rc? :("
+fi
 start_instances()
 {
 	IMAGE=$1
 	INSTS_AMOUNT=$2
-		INSTID=`ec2-run-instances $IMAGE -n $INSTS_AMOUNT -k $PEM_CRT --availability-zone $AV_ZONE | grep INSTANCE |awk -F " " '{print $2}'`
+		INSTID=`ec2-run-instances $IMAGE -n $INSTS_AMOUNT -k $PEM_CRT -g $SECURITY_GROUP --availability-zone $AV_ZONE | grep INSTANCE |awk -F " " '{print $2}'`
 	   	if [ -n "$INSTID" ];then
 			echo $INSTID
 			return 0
@@ -61,7 +65,6 @@ install_kalt_allin1()
 	INSTID=$2
 	INSTS_AMOUNT=$3
 
-#ami-65fefd0c
 	ID=`start_instances $INSTID $INSTS_AMOUNT`
 	sleep 10
 	IP=`get_instance_ip $ID`
@@ -75,9 +78,44 @@ install_kalt_allin1()
 	selinux_set_permissive
 	install_release_file
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo yum -y install $META_PACKAGE_NAME"
-	echo "hi"
 	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS `dirname $0`/all1in.ans $EC2_USR@$IP:/tmp
-	echo "hi again"
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo /opt/kaltura/bin/kaltura-config-all.sh /tmp/all1in.ans"
-	echo "hi once more"
+
+install_mysql_db()
+{
+	ANS_FILE=$1
+	INSTID=$2
+	INSTS_AMOUNT=$3
+	ID=`start_instances $INSTID $INSTS_AMOUNT`
+	sleep 10
+	IP=`get_instance_ip $ID`
+	if [ -z "$IP" ];then return 1;fi
+	STATUS=0
+	while ! get_instance_status $ID ;do
+		echo "Waiting for instance $ID to init.."
+		sleep 45
+	done
+	echo "Machine up and running... testing MySQL connectivity."
+	echo "select version();" | mysql -h$IP -u$MYSQL_SUPER_USER -p$MYSQL_SUPER_USER_PASSWD -P$MYSQL_PORT -N
+	if [ $? -ne 0 ];then
+cat << EOF
+Failed to run:
+# mysql -h$IP -u$MYSQL_SUPER_USER -p$MYSQL_SUPER_USER_PASSWD -P$MYSQL_PORT."
+Check your settings."
+EOF
+	return 1
+fi
+
+	echo DB1_NAME=$IP >> $ANS_FILE
+
+}
+
+check_img_status()
+{
+	IMGID=$1
+	while ! ec2-describe-images $IMGID | grep available;do 
+		echo "Wait for it.."		
+		sleep 20
+	done
+}
 }
