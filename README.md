@@ -64,17 +64,17 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. Verify that all relevant processes (Apache, MySQL, Sphinx, batch, memcache, monit) are up and running on all machines in the cluster
 1. Verify that all processes and crons are properly configured to run after system restart
 1. Verify HTTPs call redirects for start page, KMC, Admin Console and testme. Perform curl request (with redirect follow) to each of the URLs, and test the response returned as expected:
-1. 1. https://[DOMAIN]/  --- Verify Start Page
-1. 1. https://[DOMAIN]/api_v3/testme/  --- Verify TestMe Console Page
-1. 1. https://[DOMAIN]/index.php/kmc  --- Verify KMC 
-1. 1. https://[DOMAIN]/admin_console/  --- Verify Admin Console
+    1. https://[DOMAIN]/  --- Verify Start Page
+    1. https://[DOMAIN]/api_v3/testme/  --- Verify TestMe Console Page
+    1. https://[DOMAIN]/index.php/kmc  --- Verify KMC 
+    1. https://[DOMAIN]/admin_console/  --- Verify Admin Console
 1. Verify system restart behaviour (run 1 through 3 post restart)
 1. Verify that processes (Apache, MySQL, Sphinx, batch, memcache) are being relaunched by monit after MANUAL kill (testing crash resurrection).
 1. Verify new publisher account creation. Continue all following tests on this new partner account.
 1. Test email logs for sent new publisher account activation email.
 1. uiConf and file verifications - 
-1. 1. Run through all the uiConfs in the database.
-1. 1. For each uiConf, run through the uiConf object URLs AND inside the uiConf XML for all referenced file paths (swf, js, image files, etc.) and verify the existence of these files on disk.
+    1. Run through all the uiConfs in the database.
+    1. For each uiConf, run through the uiConf object URLs AND inside the uiConf XML for all referenced file paths (swf, js, image files, etc.) and verify the existence of these files on disk.
 1. Verify simple transcoding: Upload video, see complete transcoding flow finished successfully.
 1. Verify fallback transcoding: Rename the ffmpeg symlink. Upload video, see complete transcoding flow finished successfully. Rename the ffmpeg symlink back.
 1. Verify clipping and trimming API: Clip an entry, verify READY status on the newly created entry.
@@ -98,11 +98,11 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. Curl playManifest to that Entry WITH a valid sview KS, see that the video returns
 1. Verify YouTube distribution (create profile, distribute entry, query for success)
 1. Thumbnail API verification:
-1. 1. *This test will have a stored prepared image to compare against*
-1. 1. Clone the Fish Aquarium entry
-1. 1. Call the thmbnail API for second 25 of the new entry
-1. 1. Use ImageMagick to compare the returned image against the stored test imaged
-1. 1. If diff returns exact - test passes
+    1. *This test will have a stored prepared image to compare against*
+    1. Clone the Fish Aquarium entry
+    1. Call the thmbnail API for second 25 of the new entry
+    1. Use ImageMagick to compare the returned image against the stored test imaged
+    1. If diff returns exact - test passes
 1. Verify Red5 is working -  http://exchange.nagios.org/directory/Plugins/Software/FMS-monitor/details
 1. Verify Player - Use http://phantomjs.org/ to run base tests against player embed, playlist embed, thumbnail embed, and common player scenarios (play, pause, seek)
 
