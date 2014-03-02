@@ -108,13 +108,12 @@ Nightly testing should run a complete regression coverage via API client libs, v
 
 
 ## The Reports
-Setup a mailing list for people to subscribe for reports via email. 3 types of emails:
 
-1. If RPM layer failed packaging - email subject: [PACKAGING_FAILED] Kaltura Release - {CORE.VERSION} - {BUILD.DATE}
-1. If any of the core unit tests failed - email subject: [CORE_FAILED] Kaltura Release - {HEALTH.PERCENT} - {CORE.VERSION} - {BUILD.DATE}
-1. If all tests passed successfully - email subject: [BUILD_READY] Kaltura Release - {CORE.VERSION} - {BUILD.DATE}
+#### Web Reports
 
-The body of the email will always be a full report of the test suite in the following table: 
+* Full test report available on a URL with the version-date combo.
+* Header should show overall health status of the build - Percentage of fail/pass
+* Per test, status (FAILED or PASSED), and if failed, show unit test error output. According to the following table:
 
 | Test File     | Status        | Details                           |
 |:-------------:|:-------------:|:---------------------------------:|
@@ -122,22 +121,28 @@ The body of the email will always be a full report of the test suite in the foll
 | test_yyy      | PASSED        |                                   |
 | test_zzz      | FAILED        | Output of what failed in the test |
 
+#### Email Reports
+Setup a mailing list for people to subscribe for reports via email. 3 types of emails:
 
-#### Nightly
+1. If RPM layer failed packaging - email subject: [PACKAGING_FAILED] Kaltura Release - {CORE.VERSION} - {BUILD.DATE}
+1. If any of the core unit tests failed - email subject: [CORE_FAILED] Kaltura Release - {HEALTH.PERCENT} - {CORE.VERSION} - {BUILD.DATE}
+1. If all tests passed successfully - email subject: [BUILD_READY] Kaltura Release - {CORE.VERSION} - {BUILD.DATE}
+
+The body of the email will be a full table report of the test suite (as defined above in web reports).
+
+## Build Paths
 
 * Nightly packages are built and saved into the /nightly/ folder.
-* Full test report available on a URL with the version-date combo.
-* Overall health status of the build - percentage of fail/pass
-* Per test, status (FAIL or PASS), and if failed, dump of error info.
-
-#### Pre-QA-Release
-
 * Pre-QA-Release packages are built and saved into the /release/ folder with respective release version and date.
-* Full test report available on a URL with the version-date combo.
-* Overall health status of the build - percentage of fail/pass
-* Per test, status (FAIL or PASS), and if failed, dump of error info.
-
-#### Release Ready: Distribution
+ 
+## Post Successful Build - Client Libraries Distribution
 
 * If Pre-QA-Release passes 100%, also distribute packaged/compiled client libraries to respective repositories: http://rubygems.org/ , https://www.npmjs.org/ , https://getcomposer.org/ https://pypi.python.org/ 
 
+
+## License and Copyright Information
+All code in this project is released under the [AGPLv3 license](http://www.gnu.org/licenses/agpl-3.0.html) unless a different license for a particular library is specified in the applicable library path. 
+
+Copyright © Kaltura Inc. All rights reserved.
+
+Authors [@jessp01](https://github.com/jessp01), [@zoharbabin](https://github.com/zoharbabin) and many others.
