@@ -16,4 +16,5 @@ EC2_USR=ec2-user
 EC2_URL="https://ec2.us-east-1.amazonaws.com:443"
 PATH=$PATH:$EC2_HOME/bin
 JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64
+
 export AWS_ACCESS_KEY AWS_SECRET_KEY EC2_HOME EC2_URL JAVA_HOME PATH
