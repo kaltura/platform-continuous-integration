@@ -108,14 +108,26 @@ Nightly testing should run a complete regression coverage via API client libs, v
 
 
 ## The Reports
+Setup a mailing list for people to subscribe for reports via email. 3 types of emails:
+
+1. If RPM layer failed packaging - email subject: [PACKAGING_FAILED] Kaltura Release - {CORE.VERSION} - {BUILD.DATE}
+1. If any of the core unit tests failed - email subject: [CORE_FAILED] Kaltura Release - {HEALTH.PERCENT} - {CORE.VERSION} - {BUILD.DATE}
+1. If all tests passed successfully - email subject: [BUILD_READY] Kaltura Release - {CORE.VERSION} - {BUILD.DATE}
+
+The body of the email will always be a full report of the test suite in the following table: 
+
+| Test File     | Status        | Details                           |
+| ------------- |:-------------:| ---------------------------------:|
+| test_xxx      | PASSED        |                                   |
+| test_yyy      | PASSED        |                                   |
+| test_zzz      | FAILED        | Output of what failed in the test |
+
 
 #### Nightly
 
 * Nightly packages are built and saved into the /nightly/ folder.
 * Full test report available on a URL with the version-date combo.
 * Overall health status of the build - percentage of fail/pass
-* If overall status is less than 100% - mark drop as failed, and email Community@kaltura.com.
-* If any of the non-RPM tests failed (core issues), email BackEnd.Core@kaltura.com .
 * Per test, status (FAIL or PASS), and if failed, dump of error info.
 
 #### Pre-QA-Release
@@ -123,8 +135,6 @@ Nightly testing should run a complete regression coverage via API client libs, v
 * Pre-QA-Release packages are built and saved into the /release/ folder with respective release version and date.
 * Full test report available on a URL with the version-date combo.
 * Overall health status of the build - percentage of fail/pass
-* If overall status is less than 100% - mark drop as failed, and email Community@kaltura.com.
-* If any of the non-RPM tests failed (core issues), email BackEnd.Core@kaltura.com .
 * Per test, status (FAIL or PASS), and if failed, dump of error info.
 
 #### Release Ready: Distribution
