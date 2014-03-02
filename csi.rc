@@ -11,6 +11,7 @@ STABLE_RELEASE_RPM_URL="$REPO_URL/stable/RPMS/noarch/kaltura-release.noarch.rpm"
 NIGHTLY_RELEASE_RPM_URL="$REPO_URL/nightly/RPMS/noarch/kaltura-release.noarch.rpm"
 UNIT_TESTS_REPO="https://github.com/kaltura/platform-install-packages/archive/master.zip"
 UNIT_TESTS_SUB_DIR="sanity_tests"
+MY_SQL_INST_ID=ami-89a9abe0
 EC2_HOME=/usr/local/ec2-api
 EC2_USR=ec2-user
 EC2_URL="https://ec2.us-east-1.amazonaws.com:443"
