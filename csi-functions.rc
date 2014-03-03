@@ -1,3 +1,5 @@
+# using this library requires:
+# http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ec2-cli-get-set-up.html
 if [ -r ~/platform-continuous-integration/csi.rc ];then
 . ~/platform-continuous-integration/csi.rc
 else
