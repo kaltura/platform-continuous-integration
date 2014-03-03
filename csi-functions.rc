@@ -180,7 +180,7 @@ report()
 	RC=$2
 	TOUT=$3
 	TIME=$4
-	echo "$TNAME::$RC::$TOUT::$TIME" >> /tmp/report
+	echo "$TNAME,$RC,$TOUT,$TIME" >> /tmp/ks_9.11.0_report.csv 
 }
 
 run_sanity_tests()
@@ -194,9 +194,9 @@ run_sanity_tests()
 	RC=$?
 	report "Create Partner" $RC "New PID is $PARTNER_ID" "`expr $END - $START`" 
 	START=`date +%s`
-	PARTNER_SECRET=`echo "select admin_secret from partner where id=$PARTNER_ID" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
+	PARTNER_SECRET=`echo "select secret from partner where id=$PARTNER_ID" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
 	PARTNER_ID=`php sanity_tests/upload_test.php $SERVICE_URL $PARTNER_ID $PARTNER_SECRET sanity_tests/sources/cat.mp4`
-	END=`date +%s`
 	RC=$?
-		report "Create Partner" $RC "New PID is $PARTNER_ID" "`expr $END - $START`" 
+	END=`date +%s`
+	report "Create Partner" $RC "New PID is $PARTNER_ID" "`expr $END - $START`" 
 }
