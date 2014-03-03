@@ -63,10 +63,12 @@ selinux_set_permissive()
 install_kalt_allin1()
 {
 	RELEASE_RPM_URL=$1
-	INSTID=$2
+	KALT_IMAGE=$2
+	echo $KALT_IMAGE
 	INSTS_AMOUNT=$3
 	install_mysql_db 1 
-	ID=`start_instances $INSTID $INSTS_AMOUNT $SECURITY_GROUP`
+	echo $KALT_IMAGE
+	ID=`start_instances $KALT_IMAGE $INSTS_AMOUNT $SECURITY_GROUP`
 	sleep 10
 	IP=`get_instance_ip $ID`
 	if [ -z "$IP" ];then return 1;fi
@@ -80,9 +82,11 @@ install_kalt_allin1()
 	install_release_file
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo yum -y install $META_PACKAGE_NAME"
 	cat all1in.ans >allin1.$IP.ans
+	REG_HOST=`get_inst_reg_hostname $ID`
+	sed -i "s#@HOSTNAME@#$REG_HOST#g" allin1.$IP.ans
 	cat $MYSQL_ANS_FILE >> allin1.$IP.ans
 	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS allin1.$IP.ans $EC2_USR@$IP:/tmp
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo /opt/kaltura/bin/kaltura-config-all.sh $ANS_FILE"
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo /opt/kaltura/bin/kaltura-config-all.sh /tmp/allin1.$IP.ans"
 }
 
 install_mysql_db()
@@ -111,8 +115,10 @@ EOF
 fi
 
 	sed "s#@MYSQL_HOST@#$IP#g" $ANS_FILE >$ANS_FILE.$IP
-	sed "s#@KALT_DB_PASS@#$MYSQL_PORT#g" -i $ANS_FILE.$IP
+	sed "s#@KALT_DB_PASS@#$KALT_DB_PASS#g" -i $ANS_FILE.$IP
 	sed "s#@MYSQL_PORT@#$MYSQL_PORT#g" -i $ANS_FILE.$IP
+	sed "s#@MYSQL_SUPER_USER_PASSWD@#$MYSQL_SUPER_USER_PASSWD#g" -i $ANS_FILE.$IP
+	sed "s#@MYSQL_SUPER_USER@#$MYSQL_SUPER_USER#g" -i $ANS_FILE.$IP
 	export MYSQL_ANS_FILE=$ANS_FILE.$IP
 
 }
@@ -124,4 +130,10 @@ check_img_status()
 		echo "Wait for it.."		
 		sleep 20
 	done
+}
+
+get_inst_reg_hostname()
+{
+	INSTANCE_ID=$1
+	echo `ec2-describe-instances $INSTANCE_ID|grep INSTANCE|awk -F " " '{print $4}'`
 }
