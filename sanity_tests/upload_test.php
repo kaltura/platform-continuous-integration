@@ -1,6 +1,6 @@
 <?php
-if (count($argv)<3){
-    echo 'Usage:' .__FILE__ .' <service_url> </path/to/asset>'."\n";
+if (count($argv)<5){
+    echo 'Usage:' .__FILE__ .' <service_url> <partnerid> <secret> </path/to/asset>'."\n";
     exit (1);
 }
 function upload($client,$fileData,$title,$conv_profile=null,$type=null)
@@ -36,21 +36,21 @@ function upload($client,$fileData,$title,$conv_profile=null,$type=null)
 		throw $e;
 	}
 }
-$rc_file='./utils.rc';
 //$rc_file='functions.rc';
 $entry_queue='/tmp/upload_test_queue';
 $service_url = $argv[1];
-
-exec(". $rc_file ;echo \$MON_PARTNER",$partnerId,$rc);
+$partnerId=$argv[2];
+$secret=$argv[3];
+/*exec(". $rc_file ;echo \$MON_PARTNER",$partnerId,$rc);
 // sha1 secret
 exec(". $rc_file ;echo \$MON_PARTNER_SECRET",$secret,$rc);
 if (empty($partnerId) || empty($secret)){
     die("No partner ID and pass, check $rc_file\n");
-}
-$asset_file = $argv[2];
+}*/
+$asset_file = $argv[4];
 $basedir=dirname(__FILE__);
 require_once($basedir.'/create_session.php');
-$client=generate_ks($service_url,$partnerId[0],$secret[0],$type=KalturaSessionType::USER,$userId=null);
+$client=generate_ks($service_url,$partnerId,$secret,$type=KalturaSessionType::USER,$userId=null);
 $ext=split("\.",$asset_file);
 $id=upload($client,$asset_file,date ("U",time()).'.'.$ext[1],null,null);
 error_log($id."\n",3,$entry_queue);
