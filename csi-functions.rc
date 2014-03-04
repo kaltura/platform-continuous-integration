@@ -1,5 +1,6 @@
 # using this library requires:
 # http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ec2-cli-get-set-up.html
+#set -o nounset                              # Treat unset variables as an error
 if [ -r ~/platform-continuous-integration/csi.rc ];then
 . ~/platform-continuous-integration/csi.rc
 else
@@ -120,31 +121,31 @@ install_mysql_db()
 	ANS_FILE=$CSI_HOME/mysql.template.ans
 	MY_SQL_INSTID=$MY_SQL_INST_ID
 	INSTS_AMOUNT=$1
-	ID=`start_instances $MY_SQL_INSTID $INSTS_AMOUNT $SECURITY_GROUP`
+	MYSQL_ID=`start_instances $MY_SQL_INSTID $INSTS_AMOUNT $SECURITY_GROUP`
 	sleep 10
-	IP=`get_instance_ip $ID`
-	if [ -z "$IP" ];then return 1;fi
+	MYSQL_IP=`get_instance_ip $MYSQL_ID`
+	if [ -z "$MYSQL_IP" ];then return 1;fi
 	STATUS=0
 	START=`date +%s`
-	while ! get_instance_status $ID ;do
-		echo "Waiting for instance $ID to init.."
+	while ! get_instance_status $MYSQL_ID ;do
+		echo "Waiting for instance $MYSQL_ID to init.."
 		sleep 45
 	done
 	RC=$?
         END=`date +%s`
-	report "MySQL instance init" $RC "instance ID: $ID" "`expr $END - $START`"
+	report "MySQL instance init" $RC "instance ID: $MYSQL_ID" "`expr $END - $START`"
 	echo "Machine up and running... testing MySQL connectivity."
-	echo "select version();" | mysql -h$IP -u$MYSQL_SUPER_USER -p$MYSQL_SUPER_USER_PASSWD -P$MYSQL_PORT -N
+	echo "select version();" | mysql -h$MYSQL_IP -u$MYSQL_SUPER_USER -p$MYSQL_SUPER_USER_PASSWD -P$MYSQL_PORT -N
 	if [ $? -ne 0 ];then
 cat << EOF
 Failed to run:
-# mysql -h$IP -u$MYSQL_SUPER_USER -p$MYSQL_SUPER_USER_PASSWD -P$MYSQL_PORT."
+# mysql -h$MYSQL_IP -u$MYSQL_SUPER_USER -p$MYSQL_SUPER_USER_PASSWD -P$MYSQL_PORT."
 Check your settings."
 EOF
 	return 1
 fi
 
-	sed "s#@MYSQL_HOST@#$IP#g" $ANS_FILE >$ANS_FILE.$IP
+	sed "s#@MYSQL_HOST@#$MYSQL_IP#g" $ANS_FILE >$ANS_FILE.$IP
 	sed "s#@KALT_DB_PASS@#$KALT_DB_PASS#g" -i $ANS_FILE.$IP
 	sed "s#@MYSQL_PORT@#$MYSQL_PORT#g" -i $ANS_FILE.$IP
 	sed "s#@MYSQL_SUPER_USER_PASSWD@#$MYSQL_SUPER_USER_PASSWD#g" -i $ANS_FILE.$IP
