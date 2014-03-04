@@ -245,7 +245,8 @@ get_base_version()
 check_daemon_init_status()
 {
 	DAEMON=$1
-	if chkconfig $DAEMON;then
+	MACHINE=$2
+	if ssh -t -l$EC2_USR $MACHINE -i$PEM_CRT_PATH $SSH_QUIET_OPTS chkconfig $DAEMON;then
 		return 0
 	fi
 	return 1
@@ -255,7 +256,7 @@ check_daemon_status()
 {
 	DAEMON=$1
 	MACHINE=$2
-	if service $DAEMON status;then
+	if ssh -t -l$EC2_USR $MACHINE -i$PEM_CRT_PATH $SSH_QUIET_OPTS service $DAEMON status;then
 		return 0
 	fi
 	return 1
