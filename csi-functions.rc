@@ -96,7 +96,7 @@ install_kalt_allin1()
 	RC=$?	
 	END=`date +%s`
 	report "Kaltura RPMs download and install" $RC "yum -y install $META_PACKAGE_NAME" "`expr $END - $START`" 
-	cat $CSI_HOME/all1in.ans >allin1.$IP.ans
+	cat $CSI_HOME/all1in.template.ans >allin1.$IP.ans
 	REG_HOST=`get_inst_reg_hostname $ID`
 	sed -i "s#@HOSTNAME@#$REG_HOST#g" $CSI_HOME/allin1.$IP.ans
 	cat $MYSQL_ANS_FILE >> $CSI_HOME/allin1.$IP.ans

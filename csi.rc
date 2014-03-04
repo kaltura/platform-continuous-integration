@@ -1,3 +1,4 @@
+CSI_HOME=/home/csi/platform-continuous-integration
 AV_ZONE=us-east-1a
 PEM_CRT=csi
 PEM_CRT_PATH=~/csi.pem
@@ -18,4 +19,11 @@ EC2_URL="https://ec2.us-east-1.amazonaws.com:443"
 PATH=$PATH:$EC2_HOME/bin
 JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64
 SECURITY_GROUP="sg-2f666b44"
+APACHE_DAEMON=httpd 
+MYSQL_DAEMON=mysqld 
+SPHINX_DAEMON=kaltura-sphinx 
+BATCH_DAEMON=kaltura-batch
+MEMCACHE_DAEMON=memcached 
+MONIT_DAEMON=kaltura-monit
+CSI_DB=$CSI_HOME
 export AWS_ACCESS_KEY AWS_SECRET_KEY EC2_HOME EC2_URL JAVA_HOME PATH
