@@ -21,7 +21,10 @@ start_instances()
 		echo $INSTID
 		return 0
 	fi
-	return 1
+	if [ "$RC" -ne 0 ];then
+		report "clone instance from image $IMAGE" $RC "instance clonning FAILED " "`expr $END - $START`"
+		return 1
+	fi
 }
 
 term_instance()
@@ -77,6 +80,9 @@ install_kalt_allin1()
 	install_mysql_db 1 
 	echo $KALT_IMAGE
 	ID=`start_instances $KALT_IMAGE $INSTS_AMOUNT $SECURITY_GROUP`
+	if [ $? -ne 0 ];then
+		exit 1
+	fi
 	sleep 10
 	IP=`get_instance_ip $ID`
 	if [ -z "$IP" ];then return 1;fi
