@@ -5,7 +5,6 @@ if [ -r ~/platform-continuous-integration/csi.rc ];then
 else
 	echo "where is csi.rc? :("
 fi
-BASE_VERSION=$1
 start_instances()
 {
 	IMAGE=$1
@@ -112,7 +111,7 @@ install_kalt_allin1()
 	report "Postinst configuration" $RC "kaltura-config-all.sh /tmp/allin1.$IP.ans" "`expr $END - $START`" 
 
 	sleep 20
-	echo "ROLE=allin1" >$CSI_HOME/allin1.$IP.ans
+	echo "ROLE=allin1" >> $CSI_HOME/allin1.$IP.ans
 	run_sanity_tests $CSI_HOME/allin1.$IP.ans 
 }
 
@@ -188,7 +187,8 @@ report()
 	RC=$2
 	TOUT=$3
 	TIME=$4
-	echo "insert into csi_log values(NULL,$TNAME,"`date +%s`",$BASE_VERSION,$TOUT,$RC,$TIME);"|sqlite3 csi.db
+	BASE_VERSION=9.11.0
+	echo "insert into csi_log values(NULL,\"$TNAME\",`date +%s`,\"$BASE_VERSION\",\"$TOUT\",$RC,$TIME);"|sqlite3 $CSI_DB 
 
 }
 
@@ -199,12 +199,12 @@ run_sanity_tests()
 	if [ "$ROLE" = "allin1" ];then
 		for D in $ALL_DAEMONS; do
 			START=`date +%s`
-			if check_daemon_status;then
+			if check_daemon_status $D;then
 				END=`date +%s`
 				report "check_daemon_status" 0 "Daemon $D is running" "`expr $END - $START`"
 			fi
 			START=`date +%s`
-			if check_daemon_init_status;then
+			if check_daemon_init_status $D;then
 				END=`date +%s`
 				report "check_daemon_init_status" 0 "Daemon $D configured to run on init." "`expr $END - $START`"
 			fi
