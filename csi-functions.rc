@@ -96,11 +96,11 @@ install_kalt_allin1()
 	RC=$?	
 	END=`date +%s`
 	report "Kaltura RPMs download and install" $RC "yum -y install $META_PACKAGE_NAME" "`expr $END - $START`" 
-	cat all1in.ans >allin1.$IP.ans
+	cat $CSI_HOME/all1in.ans >allin1.$IP.ans
 	REG_HOST=`get_inst_reg_hostname $ID`
-	sed -i "s#@HOSTNAME@#$REG_HOST#g" allin1.$IP.ans
-	cat $MYSQL_ANS_FILE >> allin1.$IP.ans
-	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS allin1.$IP.ans $EC2_USR@$IP:/tmp
+	sed -i "s#@HOSTNAME@#$REG_HOST#g" $CSI_HOME/allin1.$IP.ans
+	cat $MYSQL_ANS_FILE >> $CSI_HOME/allin1.$IP.ans
+	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS $CSI_HOME/allin1.$IP.ans $EC2_USR@$IP:/tmp
 	START=`date +%s`
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo /opt/kaltura/bin/kaltura-config-all.sh /tmp/allin1.$IP.ans"
 	RC=$?	
@@ -108,12 +108,12 @@ install_kalt_allin1()
 	report "Postinst configuration" $RC "kaltura-config-all.sh /tmp/allin1.$IP.ans" "`expr $END - $START`" 
 
 	sleep 20
-	run_sanity_tests allin1.$IP.ans 
+	run_sanity_tests $CSI_HOME/allin1.$IP.ans 
 }
 
 install_mysql_db()
 {
-	ANS_FILE=mysql.template.ans
+	ANS_FILE=$CSI_HOME/mysql.template.ans
 	MY_SQL_INSTID=$MY_SQL_INST_ID
 	INSTS_AMOUNT=$1
 	ID=`start_instances $MY_SQL_INSTID $INSTS_AMOUNT $SECURITY_GROUP`
@@ -171,10 +171,10 @@ get_inst_reg_hostname()
 get_minus2_secret()
 {
 	API_IP=$1
-	. allin1.$API_IP.ans
+	. $CSI_HOME/allin1.$API_IP.ans
 	ADMIN_PARTNER_SECRET=`echo "select admin_secret from partner where id=-2" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
-	sed "s#@ADMIN_PARTNER_SECRET@#$ADMIN_PARTNER_SECRET#g" sanity_tests/utils.template.rc > sanity_tests/utils.rc
-	sed "s#@SERVICE_URL@#$SERVICE_URL#g" -i sanity_tests/utils.rc
+	sed "s#@ADMIN_PARTNER_SECRET@#$ADMIN_PARTNER_SECRET#g" $CSI_HOME/sanity_tests/utils.template.rc > $CSI_HOME/sanity_tests/utils.rc
+	sed "s#@SERVICE_URL@#$SERVICE_URL#g" -i $CSI_HOME/sanity_tests/utils.rc
 }
 
 report()
@@ -192,14 +192,40 @@ run_sanity_tests()
 	. $ANSFILE
 	ADMIN_PARTNER_SECRET=`echo "select admin_secret from partner where id=-2" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
 	START=`date +%s`
-	PARTNER_ID=`php sanity_tests/create_partner.php $ADMIN_PARTNER_SECRET mb@kaltura.com testingpasswd $SERVICE_URL`
+	PARTNER_ID=`php $CSI_HOME/sanity_tests/create_partner.php $ADMIN_PARTNER_SECRET mb@kaltura.com testingpasswd $SERVICE_URL`
 	END=`date +%s`
 	RC=$?
 	report "Create Partner" $RC "New PID is $PARTNER_ID" "`expr $END - $START`" 
 	START=`date +%s`
 	PARTNER_SECRET=`echo "select secret from partner where id=$PARTNER_ID" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
-	OUTP=`php sanity_tests/upload_test.php $SERVICE_URL $PARTNER_ID $PARTNER_SECRET sanity_tests/sources/cat.mp4`
+	OUTP=`php $CSI_HOME/sanity_tests/upload_test.php $SERVICE_URL $PARTNER_ID $PARTNER_SECRET sanity_tests/sources/cat.mp4`
 	RC=$?
 	END=`date +%s`
 	report "Upload content" $RC "$OUTP" "`expr $END - $START`" 
+}
+
+get_base_version()
+{
+	IP=$1
+	VER=`ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS rpm -q kaltura-base --queryformat %{version}`
+	echo $VER
+
+}
+
+check_daemon_init_status()
+{
+	DAEMON=$1
+	if chkconfig $DAEMON;then
+		return 0
+	fi
+	return 1
+}
+
+check_daemon_status()
+{
+	DAEMON=$1
+	if service $DAEMON status;then
+		return 0
+	fi
+	return 1
 }
