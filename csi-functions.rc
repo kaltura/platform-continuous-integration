@@ -15,7 +15,7 @@ start_instances()
 	INSTID=`ec2-run-instances $IMAGE -n $INSTS_AMOUNT -k $PEM_CRT -g $SECURITY_GROUP --availability-zone $AV_ZONE | grep INSTANCE |awk -F " " '{print $2}'`
 	RC=$?
         END=`date +%s`
-	report "Run instance from image $IMAGE" $RC "instance ID: $INSTID" "`expr $END - $START`"
+	report "clone instance from image $IMAGE" $RC "instance ID: $INSTID" "`expr $END - $START`"
 	if [ -n "$INSTID" ];then
 		echo $INSTID
 		return 0
@@ -87,7 +87,7 @@ install_kalt_allin1()
 	done
 	RC=$?
         END=`date +%s`
-	report "Kaltura instance init" $RC "instance ID: $ID" "`expr $END - $START`"
+	report "Kaltura allin1 instance init" $RC "instance ID: $ID" "`expr $END - $START`"
 	echo "Machine up and running.. SSHing."
 	selinux_set_permissive
 	install_release_file
@@ -106,6 +106,9 @@ install_kalt_allin1()
 	RC=$?	
 	END=`date +%s`
 	report "Postinst configuration" $RC "kaltura-config-all.sh /tmp/allin1.$IP.ans" "`expr $END - $START`" 
+
+	sleep 20
+	run_sanity_tests allin1.$IP.ans 
 }
 
 install_mysql_db()
@@ -125,7 +128,7 @@ install_mysql_db()
 	done
 	RC=$?
         END=`date +%s`
-	report "Kaltura instance init" $RC "instance ID: $ID" "`expr $END - $START`"
+	report "MySQL instance init" $RC "instance ID: $ID" "`expr $END - $START`"
 	echo "Machine up and running... testing MySQL connectivity."
 	echo "select version();" | mysql -h$IP -u$MYSQL_SUPER_USER -p$MYSQL_SUPER_USER_PASSWD -P$MYSQL_PORT -N
 	if [ $? -ne 0 ];then
@@ -185,8 +188,8 @@ report()
 
 run_sanity_tests()
 {
-	API_IP=$1
-	. allin1.$API_IP.ans
+	ANSFILE=$1
+	. $ANSFILE
 	ADMIN_PARTNER_SECRET=`echo "select admin_secret from partner where id=-2" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
 	START=`date +%s`
 	PARTNER_ID=`php sanity_tests/create_partner.php $ADMIN_PARTNER_SECRET mb@kaltura.com testingpasswd $SERVICE_URL`
@@ -195,8 +198,8 @@ run_sanity_tests()
 	report "Create Partner" $RC "New PID is $PARTNER_ID" "`expr $END - $START`" 
 	START=`date +%s`
 	PARTNER_SECRET=`echo "select secret from partner where id=$PARTNER_ID" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
-	PARTNER_ID=`php sanity_tests/upload_test.php $SERVICE_URL $PARTNER_ID $PARTNER_SECRET sanity_tests/sources/cat.mp4`
+	OUTP=`php sanity_tests/upload_test.php $SERVICE_URL $PARTNER_ID $PARTNER_SECRET sanity_tests/sources/cat.mp4`
 	RC=$?
 	END=`date +%s`
-	report "Create Partner" $RC "New PID is $PARTNER_ID" "`expr $END - $START`" 
+	report "Upload content" $RC "$OUTP" "`expr $END - $START`" 
 }
