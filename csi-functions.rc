@@ -5,6 +5,7 @@ if [ -r ~/platform-continuous-integration/csi.rc ];then
 else
 	echo "where is csi.rc? :("
 fi
+BASE_VERSION=$1
 start_instances()
 {
 	IMAGE=$1
@@ -108,6 +109,7 @@ install_kalt_allin1()
 	report "Postinst configuration" $RC "kaltura-config-all.sh /tmp/allin1.$IP.ans" "`expr $END - $START`" 
 
 	sleep 20
+	echo "ROLE=allin1" >$CSI_HOME/allin1.$IP.ans
 	run_sanity_tests $CSI_HOME/allin1.$IP.ans 
 }
 
@@ -183,13 +185,28 @@ report()
 	RC=$2
 	TOUT=$3
 	TIME=$4
-	echo "$TNAME,$RC,$TOUT,$TIME" >> /tmp/ks_9.11.0_report.csv 
+	echo "insert into csi_log values(NULL,$TNAME,"`date +%s`",$BASE_VERSION,$TOUT,$RC,$TIME);"|sqlite3 csi.db
+
 }
 
 run_sanity_tests()
 {
 	ANSFILE=$1
 	. $ANSFILE
+	if [ "$ROLE" = "allin1" ];then
+		for D in $ALL_DAEMONS; do
+			START=`date +%s`
+			if check_daemon_status;then
+				END=`date +%s`
+				report "check_daemon_status" 0 "Daemon $D is running" "`expr $END - $START`"
+			fi
+			START=`date +%s`
+			if check_daemon_init_status;then
+				END=`date +%s`
+				report "check_daemon_init_status" 0 "Daemon $D configured to run on init." "`expr $END - $START`"
+			fi
+		done
+	fi
 	ADMIN_PARTNER_SECRET=`echo "select admin_secret from partner where id=-2" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
 	START=`date +%s`
 	PARTNER_ID=`php $CSI_HOME/sanity_tests/create_partner.php $ADMIN_PARTNER_SECRET mb@kaltura.com testingpasswd $SERVICE_URL`
@@ -206,8 +223,8 @@ run_sanity_tests()
 
 get_base_version()
 {
-	IP=$1
-	VER=`ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS rpm -q kaltura-base --queryformat %{version}`
+	#IP=$1
+	#VER=`ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS rpm -q kaltura-base --queryformat %{version}`
 	echo $VER
 
 }
