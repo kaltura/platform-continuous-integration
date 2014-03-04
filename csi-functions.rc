@@ -193,6 +193,13 @@ report()
 
 }
 
+create_csv()
+{
+	LOW_R=$1
+	MAX_R=$2
+	echo "select * from csi_log where create_time > $LOW_R and create_time< $MAX_R;"| sqlite3 -csv $CSI_DB > "/tmp/ks_${BASE_VERSION}_`date +%d_%m_%Y`.csv"
+	echo "/tmp/ks_${BASE_VERSION}_`date +%d_%m_%Y`.csv"
+}
 run_sanity_tests()
 {
 	ANSFILE=$1
@@ -200,15 +207,17 @@ run_sanity_tests()
 	if [ "$ROLE" = "allin1" ];then
 		for D in $ALL_DAEMONS; do
 			START=`date +%s`
-			if check_daemon_status $D;then
+			if check_daemon_status $KALTURA_VIRTUAL_HOST_NAME $D;then
 				END=`date +%s`
 				report "check_daemon_status" 0 "Daemon $D is running" "`expr $END - $START`"
 			fi
+			report "check_daemon_status" 1 "Daemon $D is NOT running" "`expr $END - $START`"
 			START=`date +%s`
-			if check_daemon_init_status $D;then
+			if check_daemon_init_status $KALTURA_VIRTUAL_HOST_NAME $D;then
 				END=`date +%s`
 				report "check_daemon_init_status" 0 "Daemon $D configured to run on init." "`expr $END - $START`"
 			fi
+			report "check_daemon_init_status" 1 "Daemon $D is NOT configured to run on init." "`expr $END - $START`"
 		done
 	fi
 	ADMIN_PARTNER_SECRET=`echo "select admin_secret from partner where id=-2" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
@@ -245,6 +254,7 @@ check_daemon_init_status()
 check_daemon_status()
 {
 	DAEMON=$1
+	MACHINE=$2
 	if service $DAEMON status;then
 		return 0
 	fi
