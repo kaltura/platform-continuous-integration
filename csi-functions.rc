@@ -203,7 +203,8 @@ create_csv()
 {
 	LOW_R=$1
 	MAX_R=$2
-	echo "select * from csi_log where create_time > $LOW_R and create_time< $MAX_R;"| sqlite3 -csv $CSI_DB > "/tmp/ks_${BASE_VERSION}_`date +%d_%m_%Y`.csv"
+	echo '"ID","Test name","Insert time","Version","Command","RC","Exec time in seconds"'  > "/tmp/ks_${BASE_VERSION}_`date +%d_%m_%Y`.csv"
+	echo "select * from csi_log where create_time > $LOW_R and create_time< $MAX_R;"| sqlite3 -csv $CSI_DB >> "/tmp/ks_${BASE_VERSION}_`date +%d_%m_%Y`.csv"
 	echo "/tmp/ks_${BASE_VERSION}_`date +%d_%m_%Y`.csv"
 }
 run_sanity_tests()
@@ -252,7 +253,7 @@ check_daemon_init_status()
 {
 	DAEMON=$1
 	MACHINE=$2
-	if ssh -t -l$EC2_USR $MACHINE -i$PEM_CRT_PATH $SSH_QUIET_OPTS chkconfig $DAEMON;then
+	if ssh -t -l$EC2_USR $MACHINE -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo chkconfig $DAEMON";then
 		return 0
 	fi
 	return 1
@@ -262,7 +263,7 @@ check_daemon_status()
 {
 	DAEMON=$1
 	MACHINE=$2
-	if ssh -t -l$EC2_USR $MACHINE -i$PEM_CRT_PATH $SSH_QUIET_OPTS service $DAEMON status;then
+	if ssh -t -l$EC2_USR $MACHINE -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo service $DAEMON status";then
 		return 0
 	fi
 	return 1
