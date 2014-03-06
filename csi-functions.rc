@@ -217,8 +217,10 @@ run_sanity_tests()
 			if check_daemon_status $KALTURA_VIRTUAL_HOST_NAME $D;then
 				END=`date +%s`
 				report "check_daemon_status" 0 "Daemon $D is running" "`expr $END - $START`"
+			else
+				END=`date +%s`
+				report "check_daemon_status" 1 "Daemon $D is NOT running" "`expr $END - $START`"
 			fi
-			report "check_daemon_status" 1 "Daemon $D is NOT running" "`expr $END - $START`"
 			START=`date +%s`
 			if check_daemon_init_status $KALTURA_VIRTUAL_HOST_NAME $D;then
 				END=`date +%s`
@@ -251,8 +253,8 @@ get_base_version()
 
 check_daemon_init_status()
 {
-	DAEMON=$1
-	MACHINE=$2
+	DAEMON=$2
+	MACHINE=$1
 	if ssh -t -l$EC2_USR $MACHINE -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo chkconfig $DAEMON";then
 		return 0
 	fi
@@ -261,8 +263,8 @@ check_daemon_init_status()
 
 check_daemon_status()
 {
-	DAEMON=$1
-	MACHINE=$2
+	DAEMON=$2
+	MACHINE=$1
 	if ssh -t -l$EC2_USR $MACHINE -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo service $DAEMON status";then
 		return 0
 	fi
