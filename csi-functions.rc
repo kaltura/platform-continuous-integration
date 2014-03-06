@@ -11,18 +11,18 @@ start_instances()
 	IMAGE=$1
 	INSTS_AMOUNT=$2
 	SECURITY_GROUP=$3
-	START=`date +%s`
-
+	START=`date +%s.%N`
 	INSTID=`ec2-run-instances $IMAGE -n $INSTS_AMOUNT -k $PEM_CRT -g $SECURITY_GROUP --availability-zone $AV_ZONE | grep INSTANCE |awk -F " " '{print $2}'`
 	RC=$?
-        END=`date +%s`
-	report "clone instance from image $IMAGE" $RC "instance ID: $INSTID" "`expr $END - $START`"
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "clone instance from image $IMAGE" $RC "instance ID: $INSTID" "`bc <<< $END-$START`"
 	if [ -n "$INSTID" ];then
 		echo $INSTID
 		return 0
 	fi
 	if [ "$RC" -ne 0 ];then
-		report "clone instance from image $IMAGE" $RC "instance clonning FAILED " "`expr $END - $START`"
+		report "clone instance from image $IMAGE" $RC "instance clonning FAILED " "`bc <<< $END-$START`"
 		return 1
 	fi
 }
@@ -87,22 +87,24 @@ install_kalt_allin1()
 	IP=`get_instance_ip $ID`
 	if [ -z "$IP" ];then return 1;fi
 	STATUS=0
-	START=`date +%s`
+	START=`date +%s.%N`
 	while ! get_instance_status $ID ;do
 		echo "Waiting for instance to init.."
 		sleep 45
 	done
 	RC=$?
-        END=`date +%s`
-	report "Kaltura allin1 instance init" $RC "instance ID: $ID" "`expr $END - $START`"
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "Kaltura allin1 instance init" $RC "instance ID: $ID" "`bc <<< $END-$START`"
 	echo "Machine up and running.. SSHing."
 	selinux_set_permissive
 	install_release_file
-	START=`date +%s`
+	START=`date +%s.%N`
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo yum -y install $META_PACKAGE_NAME"
 	RC=$?	
-	END=`date +%s`
-	report "Kaltura RPMs download and install" $RC "yum -y install $META_PACKAGE_NAME" "`expr $END - $START`" 
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "Kaltura RPMs download and install" $RC "yum -y install $META_PACKAGE_NAME" "`bc <<< $END-$START`" 
 	cat $CSI_HOME/all1in.template.ans >allin1.$IP.ans
 	if [ ! -r $CSI_HOME/allin1.$IP.ans ];then
 		report "$CSI_HOME/allin1.$IP.ans wasn't created" 1 "Bail:(" 0
@@ -111,11 +113,12 @@ install_kalt_allin1()
 	sed -i "s#@HOSTNAME@#$REG_HOST#g" $CSI_HOME/allin1.$IP.ans
 	cat $MYSQL_ANS_FILE >> $CSI_HOME/allin1.$IP.ans
 	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS $CSI_HOME/allin1.$IP.ans $EC2_USR@$IP:/tmp
-	START=`date +%s`
+	START=`date +%s.%N`
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo /opt/kaltura/bin/kaltura-config-all.sh /tmp/allin1.$IP.ans"
 	RC=$?	
-	END=`date +%s`
-	report "Postinst configuration" $RC "kaltura-config-all.sh /tmp/allin1.$IP.ans" "`expr $END - $START`" 
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "Postinst configuration" $RC "kaltura-config-all.sh /tmp/allin1.$IP.ans" "`bc <<< $END-$START`" 
 
 	sleep 20
 	echo "ROLE=allin1" >> $CSI_HOME/allin1.$IP.ans
@@ -124,30 +127,36 @@ install_kalt_allin1()
 
 install_nfs_server()
 {
-	ANS_FILE=$CSI_HOME/mysql.template.ans
+	#ANS_FILE=$CSI_HOME/mysql.template.ans
 	INSTS_AMOUNT=$1
 	NFS_ID=`start_instances $NFS_IMG $INSTS_AMOUNT $SECURITY_GROUP`
 	sleep 10
 	NFS_IP=`get_instance_ip $NFS_ID`
 	if [ -z "$NFS_IP" ];then return 1;fi
 	STATUS=0
-	START=`date +%s`
+	START=`date +%s.%N`
 	while ! get_instance_status $NFS_ID ;do
 		echo "Waiting for instance $NFS_ID to init.."
 		sleep 45
 	done
 	RC=$?
-        END=`date +%s`
-	report "NFS server instance init" $RC "instance ID: $NFS_ID" "`expr $END - $START`"
-	echo "Checking $NFS_SERVER on port 2049.."
-        nc -z $NFS_SERVER 2049 -w2
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "NFS server instance init" $RC "instance ID: $NFS_ID" "`bc <<< $END-$START`"
+	echo "Checking $NFS_IP on port 2049.."
+        nc -z $NFS_IP 2049 -w2
 	RC=$?
-	report "Connection to $NFS_SERVER on port 2049 [tcp/nfs]" $RC "nc -z $NFS_SERVER 2049 -w2" "`expr $END - $START`"
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "Connection to $NFS_IP on port 2049 [tcp/nfs]" $RC "nc -z $NFS_IP 2049 -w2" "`bc <<< $END-$START`"
 	
-        echo "Checking $NFS_SERVER on port 2049.."
-        nc -z -u $NFS_SERVER 2049 -w2
+        echo "Checking $NFS_IP on port 2049.."
+	START=`date +%s.%N`
+        nc -z -u $NFS_IP 2049 -w2
 	RC=$?
-	report "Connection to $NFS_SERVER on port 2049 [udp/nfs]" $RC "nc -z $NFS_SERVER 2049 -w2" "`expr $END - $START`"
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "Connection to $NFS_IP on port 2049 [udp/nfs]" $RC "nc -z $NFS_IP 2049 -w2" "`bc <<< $END-$START`"
 
 }
 install_mysql_db()
@@ -160,14 +169,15 @@ install_mysql_db()
 	MYSQL_IP=`get_instance_ip $MYSQL_ID`
 	if [ -z "$MYSQL_IP" ];then return 1;fi
 	STATUS=0
-	START=`date +%s`
+	START=`date +%s.%N`
 	while ! get_instance_status $MYSQL_ID ;do
 		echo "Waiting for instance $MYSQL_ID to init.."
 		sleep 45
 	done
 	RC=$?
-        END=`date +%s`
-	report "MySQL instance init" $RC "instance ID: $MYSQL_ID" "`expr $END - $START`"
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "MySQL instance init" $RC "instance ID: $MYSQL_ID" "`bc <<< $END-$START`"
 	echo "Machine up and running... testing MySQL connectivity."
 	echo "select version();" | mysql -h$MYSQL_IP -u$MYSQL_SUPER_USER -p$MYSQL_SUPER_USER_PASSWD -P$MYSQL_PORT -N
 	if [ $? -ne 0 ];then
@@ -241,35 +251,43 @@ run_sanity_tests()
 	. $ANSFILE
 	if [ "$ROLE" = "allin1" ];then
 		for D in $ALL_DAEMONS; do
-			START=`date +%s`
+			START=`date +%s.%N`
 			if check_daemon_status $KALTURA_VIRTUAL_HOST_NAME $D;then
-				END=`date +%s`
-				report "check_daemon_status" 0 "Daemon $D is running" "`expr $END - $START`"
+				END=`date +%s.%N`
+				TOTAL_T=`bc <<< $TIME`
+				report "check_daemon_status" 0 "Daemon $D is running" "`bc <<< $END-$START`"
 			else
-				END=`date +%s`
-				report "check_daemon_status" 1 "Daemon $D is NOT running" "`expr $END - $START`"
+				END=`date +%s.%N`
+				TOTAL_T=`bc <<< $TIME`
+				report "check_daemon_status" 1 "Daemon $D is NOT running" "`bc <<< $END-$START`"
 			fi
-			START=`date +%s`
+			START=`date +%s.%N`
 			if check_daemon_init_status $KALTURA_VIRTUAL_HOST_NAME $D;then
-				END=`date +%s`
-				report "check_daemon_init_status" 0 "Daemon $D configured to run on init." "`expr $END - $START`"
+				END=`date +%s.%N`
+				TOTAL_T=`bc <<< $TIME`
+				report "check_daemon_init_status" 0 "Daemon $D configured to run on init." "`bc <<< $END-$START`"
 			else
-				report "check_daemon_init_status" 1 "Daemon $D is NOT configured to run on init." "`expr $END - $START`"
+				END=`date +%s.%N`
+				TOTAL_T=`bc <<< $TIME`
+				report "check_daemon_init_status" 1 "Daemon $D is NOT configured to run on init." "`bc <<< $END-$START`"
 			fi
 		done
 	fi
 	ADMIN_PARTNER_SECRET=`echo "select admin_secret from partner where id=-2" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
-	START=`date +%s`
+	START=`date +%s.%N`
+	report "MySQL instance init" $RC "instance ID: $MYSQL_ID" "$TIME"
 	PARTNER_ID=`php $CSI_HOME/sanity_tests/create_partner.php $ADMIN_PARTNER_SECRET mb@kaltura.com testingpasswd $SERVICE_URL`
-	END=`date +%s`
 	RC=$?
-	report "Create Partner" $RC "New PID is $PARTNER_ID" "`expr $END - $START`" 
-	START=`date +%s`
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "Create Partner" $RC "New PID is $PARTNER_ID" "`bc <<< $END-$START`" 
+	START=`date +%s.%N`
 	PARTNER_SECRET=`echo "select secret from partner where id=$PARTNER_ID" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
 	OUTP=`php $CSI_HOME/sanity_tests/upload_test.php $SERVICE_URL $PARTNER_ID $PARTNER_SECRET sanity_tests/sources/cat.mp4`
 	RC=$?
-	END=`date +%s`
-	report "Upload content" $RC "$OUTP" "`expr $END - $START`" 
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	report "Upload content" $RC "$OUTP" "`bc <<< $END-$START`" 
 }
 
 get_base_version()
