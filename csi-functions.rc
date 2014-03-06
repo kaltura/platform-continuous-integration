@@ -122,6 +122,34 @@ install_kalt_allin1()
 	run_sanity_tests $CSI_HOME/allin1.$IP.ans 
 }
 
+install_nfs_server()
+{
+	ANS_FILE=$CSI_HOME/mysql.template.ans
+	INSTS_AMOUNT=$1
+	NFS_ID=`start_instances $NFS_IMG $INSTS_AMOUNT $SECURITY_GROUP`
+	sleep 10
+	NFS_IP=`get_instance_ip $NFS_ID`
+	if [ -z "$NFS_IP" ];then return 1;fi
+	STATUS=0
+	START=`date +%s`
+	while ! get_instance_status $NFS_ID ;do
+		echo "Waiting for instance $NFS_ID to init.."
+		sleep 45
+	done
+	RC=$?
+        END=`date +%s`
+	report "NFS server instance init" $RC "instance ID: $NFS_ID" "`expr $END - $START`"
+	echo "Checking $NFS_SERVER on port 2049.."
+        nc -z $NFS_SERVER 2049 -w2
+	RC=$?
+	report "Connection to $NFS_SERVER on port 2049 [tcp/nfs]" $RC "nc -z $NFS_SERVER 2049 -w2" "`expr $END - $START`"
+	
+        echo "Checking $NFS_SERVER on port 2049.."
+        nc -z -u $NFS_SERVER 2049 -w2
+	RC=$?
+	report "Connection to $NFS_SERVER on port 2049 [udp/nfs]" $RC "nc -z $NFS_SERVER 2049 -w2" "`expr $END - $START`"
+
+}
 install_mysql_db()
 {
 	ANS_FILE=$CSI_HOME/mysql.template.ans
@@ -225,8 +253,9 @@ run_sanity_tests()
 			if check_daemon_init_status $KALTURA_VIRTUAL_HOST_NAME $D;then
 				END=`date +%s`
 				report "check_daemon_init_status" 0 "Daemon $D configured to run on init." "`expr $END - $START`"
+			else
+				report "check_daemon_init_status" 1 "Daemon $D is NOT configured to run on init." "`expr $END - $START`"
 			fi
-			report "check_daemon_init_status" 1 "Daemon $D is NOT configured to run on init." "`expr $END - $START`"
 		done
 	fi
 	ADMIN_PARTNER_SECRET=`echo "select admin_secret from partner where id=-2" | mysql -N -h $DB1_HOST -p$DB1_PASS $DB1_NAME -u$DB1_USER`
@@ -245,10 +274,7 @@ run_sanity_tests()
 
 get_base_version()
 {
-	#IP=$1
-	#VER=`ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS rpm -q kaltura-base --queryformat %{version}`
 	echo $VER
-
 }
 
 check_daemon_init_status()
