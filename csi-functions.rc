@@ -125,7 +125,7 @@ install_kalt_allin1()
 install_mysql_db()
 {
 	ANS_FILE=$CSI_HOME/mysql.template.ans
-	MY_SQL_INSTID=$MY_SQL_INST_ID
+	MY_SQL_INSTID=$MYSQL_IMG
 	INSTS_AMOUNT=$1
 	MYSQL_ID=`start_instances $MY_SQL_INSTID $INSTS_AMOUNT $SECURITY_GROUP`
 	sleep 10
