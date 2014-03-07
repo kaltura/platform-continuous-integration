@@ -114,7 +114,7 @@ install_kalt_allin1()
 	cat $MYSQL_ANS_FILE >> $CSI_HOME/allin1.$IP.ans
 	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS $CSI_HOME/allin1.$IP.ans $EC2_USR@$IP:/tmp
 	START=`date +%s.%N`
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo /opt/kaltura/bin/kaltura-config-all.sh /tmp/allin1.$IP.ans"
+	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "echo "NO" | sudo /opt/kaltura/bin/kaltura-config-all.sh /tmp/allin1.$IP.ans"
 	RC=$?	
 	END=`date +%s.%N`
 	TOTAL_T=`bc <<< $TIME`
