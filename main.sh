@@ -24,6 +24,7 @@ else
 fi
 set -x
 install_kalt_allin1 $NIGHTLY_RELEASE_RPM_URL $KALTURA_NODE_IMG 1 > /tmp/csi_inst_`date +%d_%m_%Y_%h_%M.log 2>&1; 
+tail -f /tmp/csi_inst_`date +%d_%m_%Y_%h_%M.log
 #MAIL_TO="jess.portnoy@kaltura.com"
 MAIL_TO="jess.portnoy@kaltura.com,zohar.babin@kaltura.com"
 EPOCH_CURR=`date +%s`
