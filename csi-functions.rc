@@ -232,7 +232,6 @@ report()
 	RC=$2
 	TOUT=$3
 	TIME=$4
-	BASE_VERSION=9.11.0
 	echo "insert into csi_log values(NULL,\"$TNAME\",`date +%s`,\"$BASE_VERSION\",\"$TOUT\",$RC,$TIME);"|sqlite3 $CSI_DB 
 
 }
