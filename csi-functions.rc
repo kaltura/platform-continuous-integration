@@ -75,10 +75,8 @@ install_kalt_allin1()
 {
 	RELEASE_RPM_URL=$1
 	KALT_IMAGE=$2
-	echo $KALT_IMAGE
 	INSTS_AMOUNT=$3
 	install_mysql_db 1 
-	echo $KALT_IMAGE
 	ID=`start_instances $KALT_IMAGE $INSTS_AMOUNT $SECURITY_GROUP`
 	if [ $? -ne 0 ];then
 		exit 1
@@ -87,6 +85,8 @@ install_kalt_allin1()
 	IP=`get_instance_ip $ID`
 	if [ -z "$IP" ];then return 1;fi
 	STATUS=0
+	ANS_FILE="allin1_${IP}.ans"
+	echo "My file of ans is here: $ANS_FILE" >/tmp/logger
 	START=`date +%s.%N`
 	while ! get_instance_status $ID ;do
 		echo "Waiting for instance to init.."
@@ -105,14 +105,17 @@ install_kalt_allin1()
 	END=`date +%s.%N`
 	TOTAL_T=`bc <<< $TIME`
 	report "Kaltura RPMs download and install" $RC "yum -y install $META_PACKAGE_NAME" "`bc <<< $END-$START`" 
+	echo "cat $CSI_HOME/all1in.template.ans >$ANS_FILE" >/tmp/logger
 	cat $CSI_HOME/all1in.template.ans >$ANS_FILE
-	if [ ! -r $CSI_HOME/$ANS_FILE ];then
-		report "$CSI_HOME/$ANS_FILE wasn't created" 1 "Bail:(" 0
+	if [ ! -r $ANS_FILE ];then
+		report "$ANS_FILE wasn't created" 1 "Bail:(" 0
 	fi
 	REG_HOST=`get_inst_reg_hostname $ID`
-	sed -i "s#@HOSTNAME@#$REG_HOST#g" $CSI_HOME/$ANS_FILE
-	cat $MYSQL_ANS_FILE >> $CSI_HOME/$ANS_FILE
-	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS $CSI_HOME/$ANS_FILE $EC2_USR@$IP:/tmp
+	sed -i "s#@HOSTNAME@#$REG_HOST#g" $ANS_FILE
+	echo "cat $MYSQL_ANS_FILE >> $ANS_FILE" >>/tmp/logger
+	cat $MYSQL_ANS_FILE >> $ANS_FILE
+	cp $ANS_FILE /tmp/jess.ans
+	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS $ANS_FILE $EC2_USR@$IP:/tmp
 	START=`date +%s.%N`
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "echo "NO" | sudo /opt/kaltura/bin/kaltura-config-all.sh /tmp/$ANS_FILE"
 	RC=$?	
@@ -121,8 +124,12 @@ install_kalt_allin1()
 	report "Postinst configuration" $RC "kaltura-config-all.sh /tmp/$ANS_FILE" "`bc <<< $END-$START`" 
 
 	sleep 20
-	echo "ROLE=allin1" >> $CSI_HOME/$ANS_FILE
-	run_sanity_tests $CSI_HOME/$ANS_FILE 
+	echo "ROLE=allin1" >> $ANS_FILE
+	if [ $RC -ne 0 ];then 
+		echo "I failed"
+		exit 11
+	fi
+	run_sanity_tests $ANS_FILE 
 }
 
 install_kalt_cluster()
@@ -135,6 +142,12 @@ install_kalt_cluster()
 	install_kalt_batch
 	$BASE_DIR/bin/kaltura-dwh-config.sh "$ANSFILE"
 
+}
+
+setup_nfs_mount()
+{
+	NODE=$1
+	NFS_MACH=$2
 }
 
 install_nfs_server()
@@ -172,162 +185,6 @@ install_nfs_server()
 
 }
 
-install_kalt_batch()
-{
-	RELEASE_RPM_URL=$1
-	KALT_IMAGE=$2
-	INSTS_AMOUNT=$3
-	#install_mysql_db 1 
-	ID=`start_instances $KALT_IMAGE $INSTS_AMOUNT $SECURITY_GROUP`
-	if [ $? -ne 0 ];then
-		exit 1
-	fi
-	sleep 10
-	IP=`get_instance_ip $ID`
-	if [ -z "$IP" ];then return 1;fi
-	STATUS=0
-	ANS_FILE="batch.$IP.ans"
-	START=`date +%s.%N`
-	while ! get_instance_status $ID ;do
-		echo "Waiting for instance to init.."
-		sleep 45
-	done
-	RC=$?
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	report "Kaltura batch instance init" $RC "instance ID: $ID" "`bc <<< $END-$START`"
-	echo "Machine up and running.. SSHing."
-	selinux_set_permissive
-	install_release_file
-	START=`date +%s.%N`
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo yum -y install $BATCH_PACKAGE_NAME"
-	RC=$?	
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	report "Kaltura RPMs download and install" $RC "yum -y install $BATCH_PACKAGE_NAME" "`bc <<< $END-$START`" 
-	cat $CSI_HOME/batch.template.ans >$ANS_FILE
-	if [ ! -r $CSI_HOME/$ANS_FILE ];then
-		report "$CSI_HOME/$ANS_FILE wasn't created" 1 "Bail:(" 0
-	fi
-	REG_HOST=`get_inst_reg_hostname $ID`
-	sed -i "s#@HOSTNAME@#$REG_HOST#g" $CSI_HOME/$ANS_FILE
-	cat $MYSQL_ANS_FILE >> $CSI_HOME/$ANS_FILE
-	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS $CSI_HOME/$ANS_FILE $EC2_USR@$IP:/tmp
-	START=`date +%s.%N`
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "echo "NO" | sudo /opt/kaltura/bin/kaltura-config-batch.sh /tmp/$ANS_FILE"
-	RC=$?	
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	report "Postinst configuration" $RC "kaltura-config-batch.sh /tmp/$ANS_FILE" "`bc <<< $END-$START`" 
-
-	sleep 20
-	echo "ROLE=batch" >> $CSI_HOME/$ANS_FILE
-	#run_sanity_tests $CSI_HOME/$ANS_FILE 
-}
-
-install_kalt_sphinx()
-{
-	RELEASE_RPM_URL=$1
-	KALT_IMAGE=$2
-	INSTS_AMOUNT=$3
-	#install_mysql_db 1 
-	ID=`start_instances $KALT_IMAGE $INSTS_AMOUNT $SECURITY_GROUP`
-	if [ $? -ne 0 ];then
-		exit 1
-	fi
-	sleep 10
-	IP=`get_instance_ip $ID`
-	if [ -z "$IP" ];then return 1;fi
-	STATUS=0
-	ANS_FILE="sphinx.$IP.ans"
-	START=`date +%s.%N`
-	while ! get_instance_status $ID ;do
-		echo "Waiting for instance to init.."
-		sleep 45
-	done
-	RC=$?
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	report "Kaltura sphinx instance init" $RC "instance ID: $ID" "`bc <<< $END-$START`"
-	echo "Machine up and running.. SSHing."
-	selinux_set_permissive
-	install_release_file
-	START=`date +%s.%N`
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo yum -y install $SPHINX_PACKAGE_NAME"
-	RC=$?	
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	report "Kaltura RPMs download and install" $RC "yum -y install $BATCH_PACKAGE_NAME" "`bc <<< $END-$START`" 
-	cat $CSI_HOME/sphinx.template.ans >$ANS_FILE
-	if [ ! -r $CSI_HOME/$ANS_FILE ];then
-		report "$CSI_HOME/$ANS_FILE wasn't created" 1 "Bail:(" 0
-	fi
-	REG_HOST=`get_inst_reg_hostname $ID`
-	sed -i "s#@HOSTNAME@#$REG_HOST#g" $CSI_HOME/$ANS_FILE
-	cat $MYSQL_ANS_FILE >> $CSI_HOME/$ANS_FILE
-	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS $CSI_HOME/$ANS_FILE $EC2_USR@$IP:/tmp
-	START=`date +%s.%N`
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "echo "NO" | sudo /opt/kaltura/bin/kaltura-config-sphinx.sh /tmp/$ANS_FILE"
-	RC=$?	
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	report "Postinst configuration" $RC "kaltura-config-sphinx.sh /tmp/$ANS_FILE" "`bc <<< $END-$START`" 
-
-	sleep 20
-	echo "ROLE=sphinx" >> $CSI_HOME/$ANS_FILE
-	#run_sanity_tests $CSI_HOME/$ANS_FILE 
-}
-
-install_kalt_front()
-{
-	RELEASE_RPM_URL=$1
-	KALT_IMAGE=$2
-	INSTS_AMOUNT=$3
-	ID=`start_instances $KALT_IMAGE $INSTS_AMOUNT $SECURITY_GROUP`
-	if [ $? -ne 0 ];then
-		exit 1
-	fi
-	sleep 10
-	IP=`get_instance_ip $ID`
-	if [ -z "$IP" ];then return 1;fi
-	STATUS=0
-	ANS_FILE="front.$IP.ans"
-	START=`date +%s.%N`
-	while ! get_instance_status $ID ;do
-		echo "Waiting for instance to init.."
-		sleep 45
-	done
-	RC=$?
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	report "Kaltura front instance init" $RC "instance ID: $ID" "`bc <<< $END-$START`"
-	echo "Machine up and running.. SSHing."
-	selinux_set_permissive
-	install_release_file
-	START=`date +%s.%N`
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo yum -y install $FRONT_PACKAGE_NAME"
-	RC=$?	
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	report "Kaltura RPMs download and install" $RC "yum -y install $FRONT_PACKAGE_NAME" "`bc <<< $END-$START`" 
-	cat $CSI_HOME/front.template.ans >$ANS_FILE
-	if [ ! -r $CSI_HOME/$ANS_FILE ];then
-		report "$CSI_HOME/$ANS_FILE wasn't created" 1 "Bail:(" 0
-	fi
-	REG_HOST=`get_inst_reg_hostname $ID`
-	sed -i "s#@HOSTNAME@#$REG_HOST#g" $CSI_HOME/$ANS_FILE
-	cat $MYSQL_ANS_FILE >> $CSI_HOME/$ANS_FILE
-	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS $CSI_HOME/$ANS_FILE $EC2_USR@$IP:/tmp
-	START=`date +%s.%N`
-	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "echo "NO" | sudo /opt/kaltura/bin/kaltura-config-front.sh /tmp/$ANS_FILE"
-	RC=$?	
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	report "Postinst configuration" $RC "kaltura-config-front.sh /tmp/$ANS_FILE" "`bc <<< $END-$START`" 
-
-	sleep 20
-	echo "ROLE=front" >> $CSI_HOME/$ANS_FILE
-}
 
 install_mysql_db()
 {
@@ -359,12 +216,12 @@ EOF
 	return 1
 fi
 
-	sed "s#@MYSQL_HOST@#$MYSQL_IP#g" $ANS_FILE >$ANS_FILE.$IP
-	sed "s#@KALT_DB_PASS@#$KALT_DB_PASS#g" -i $ANS_FILE.$IP
-	sed "s#@MYSQL_PORT@#$MYSQL_PORT#g" -i $ANS_FILE.$IP
-	sed "s#@MYSQL_SUPER_USER_PASSWD@#$MYSQL_SUPER_USER_PASSWD#g" -i $ANS_FILE.$IP
-	sed "s#@MYSQL_SUPER_USER@#$MYSQL_SUPER_USER#g" -i $ANS_FILE.$IP
-	export MYSQL_ANS_FILE=$ANS_FILE.$IP
+	sed "s#@MYSQL_HOST@#$MYSQL_IP#g" $ANS_FILE >$ANS_FILE.$MYSQL_IP
+	sed "s#@KALT_DB_PASS@#$KALT_DB_PASS#g" -i $ANS_FILE.$MYSQL_IP
+	sed "s#@MYSQL_PORT@#$MYSQL_PORT#g" -i $ANS_FILE.$MYSQL_IP
+	sed "s#@MYSQL_SUPER_USER_PASSWD@#$MYSQL_SUPER_USER_PASSWD#g" -i $ANS_FILE.$MYSQL_IP
+	sed "s#@MYSQL_SUPER_USER@#$MYSQL_SUPER_USER#g" -i $ANS_FILE.$MYSQL_IP
+	export MYSQL_ANS_FILE=$ANS_FILE.$MYSQL_IP
 
 }
 

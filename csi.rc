@@ -6,6 +6,9 @@ SECRETS_PATH=~/.amzsecrets
 . $SECRETS_PATH
 SSH_QUIET_OPTS="-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 META_PACKAGE_NAME="kaltura-server"
+BATCH_PACKAGE_NAME="kaltura-batch"
+SPHINX_PACKAGE_NAME="kaltura-sphinx"
+FRONT_PACKAGE_NAME="kaltura-front"
 IMAGE_TYPES="BATCH0 BATCH1 SPHINX0 SPHINX1 FRONT0 FRONT1 ADMINCONSOLE0 ADMINCONSOLE1 LB MYSQL"
 REPO_URL="http://54.211.235.142/releases"
 STABLE_RELEASE_RPM_URL="$REPO_URL/stable/RPMS/noarch/kaltura-release.noarch.rpm"
@@ -16,6 +19,7 @@ SECURITY_GROUP="sg-2f666b44"
 NFS_IMG="ami-05d2de6c"
 MYSQL_IMG="ami-89a9abe0"
 KALTURA_NODE_IMG="ami-7feae816"
+#KALTURA_NODE_IMG="ami-351a145c"
 EC2_HOME=/usr/local/ec2-api
 EC2_USR=ec2-user
 EC2_URL="https://ec2.us-east-1.amazonaws.com:443"
