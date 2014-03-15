@@ -31,6 +31,6 @@ EPOCH_CURR=`date +%s`
 MIN_TIMESTAMP=`expr $EPOCH_CURR - 7200`
 MAX_TIMESTAMP=`expr $EPOCH_CURR + 7200`
 CSV_FILE=`create_csv $MIN_TIMESTAMP $MAX_TIMESTAMP`
-echo "Sanity for Kaltura BASE_VERSION" | mutt -s "Sanity for Kaltura $BASE_VERSION" $MAIL_TO -a $LOGIE -a $CSV_FILE
+echo "Sanity for Kaltura $BASE_VERSION. See attached log and CSV report." | mutt -s "Sanity for Kaltura $BASE_VERSION" $MAIL_TO -a $LOGIE -a $CSV_FILE
 
 

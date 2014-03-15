@@ -77,6 +77,8 @@ install_kalt_allin1()
 	KALT_IMAGE=$2
 	INSTS_AMOUNT=$3
 	install_mysql_db 1 
+	#NFS_IP=`install_nfs_server 1`
+	NFS_IP=75.101.174.186
 	ID=`start_instances $KALT_IMAGE $INSTS_AMOUNT $SECURITY_GROUP`
 	if [ $? -ne 0 ];then
 		exit 1
@@ -96,6 +98,7 @@ install_kalt_allin1()
 	END=`date +%s.%N`
 	TOTAL_T=`bc <<< $TIME`
 	report "Kaltura allin1 instance init" $RC "instance ID: $ID" "`bc <<< $END-$START`"
+	sleep 2000 
 	echo "Machine up and running.. SSHing."
 	selinux_set_permissive
 	install_release_file
@@ -117,6 +120,7 @@ install_kalt_allin1()
 	cp $ANS_FILE /tmp/jess.ans
 	scp  -i$PEM_CRT_PATH $SSH_QUIET_OPTS $ANS_FILE $EC2_USR@$IP:/tmp
 	START=`date +%s.%N`
+	setup_nfs_mount $IP $NFS_IP
 	ssh -t -l$EC2_USR $IP -i$PEM_CRT_PATH $SSH_QUIET_OPTS "echo "NO" | sudo /opt/kaltura/bin/kaltura-config-all.sh /tmp/$ANS_FILE"
 	RC=$?	
 	END=`date +%s.%N`
@@ -148,6 +152,19 @@ setup_nfs_mount()
 {
 	NODE=$1
 	NFS_MACH=$2
+	START=`date +%s.%N`
+	#ssh -t -l$EC2_USR $NODE -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo /opt/kaltura/bin/kaltura-nfs-client-config.sh $NFS_MACH kaltura.dev apache kaltura"
+	ssh -t -lec2-user 54.81.215.45 -i/home/csi/csi.pem -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo sed -i  "s@^[0-9.a-z]*.*\(:/opt/kaltura/web /opt/kaltura/web nfs4\)@75.101.174.186\1@" /etc/fstab'
+	ssh -t -l$EC2_USR $NODE -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo mount /opt/kaltura/web"
+
+	RC=$?	
+	END=`date +%s.%N`
+	TOTAL_T=`bc <<< $TIME`
+	if [ $? -eq 0 ];then
+		report "setup_nfs_mount()" 1 "Success:)" "`bc <<< $END-$START`" 
+	else
+		report "setup_nfs_mount()" 1 "Failed:(" "`bc <<< $END-$START`"
+	fi
 }
 
 install_nfs_server()
@@ -182,6 +199,7 @@ install_nfs_server()
 	END=`date +%s.%N`
 	TOTAL_T=`bc <<< $TIME`
 	report "Connection to $NFS_IP on port 2049 [udp/nfs]" $RC "nc -z $NFS_IP 2049 -w2" "`bc <<< $END-$START`"
+	echo $NFS_IP
 
 }
 
