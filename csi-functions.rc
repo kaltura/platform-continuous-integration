@@ -160,10 +160,10 @@ setup_nfs_mount()
 	RC=$?	
 	END=`date +%s.%N`
 	TOTAL_T=`bc <<< $TIME`
-	if [ $? -eq 0 ];then
-		report "setup_nfs_mount()" 1 "Success:)" "`bc <<< $END-$START`" 
+	if [ $RC -eq 0 ];then
+		report "setup_nfs_mount()" $RC "Success:)" "`bc <<< $END-$START`" 
 	else
-		report "setup_nfs_mount()" 1 "Failed:(" "`bc <<< $END-$START`"
+		report "setup_nfs_mount()" $RC "Failed:(" "`bc <<< $END-$START`"
 	fi
 }
 
