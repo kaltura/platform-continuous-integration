@@ -61,16 +61,16 @@ Following successful deployment and upgrade of the Kaltura clusters, the test su
 The following test cases will be run in the following order, on each cluster deployment (both clean and upgrade).
 Nightly testing should run a complete regression coverage via API client libs, verifying the stability of the latest MASTER branch.   
 
-1. Verify that all relevant processes (Apache, MySQL, Sphinx, batch, memcache, monit) are up and running on all machines in the cluster
-1. Verify that all processes and crons are properly configured to run after system restart
-1. Verify HTTPs call redirects for start page, KMC, Admin Console and testme. Perform curl request (with redirect follow) to each of the URLs, and test the response returned as expected:
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that all relevant processes (Apache, MySQL, Sphinx, batch, memcache, monit) are up and running on all machines in the cluster
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that all processes and crons are properly configured to run after system restart
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify HTTPs call redirects for start page, KMC, Admin Console and testme. Perform curl request (with redirect follow) to each of the URLs, and test the response returned as expected:
     1. https://[DOMAIN]/  --- Verify Start Page
     1. https://[DOMAIN]/api_v3/testme/  --- Verify TestMe Console Page
     1. https://[DOMAIN]/index.php/kmc  --- Verify KMC 
     1. https://[DOMAIN]/admin_console/  --- Verify Admin Console
-1. Verify system restart behaviour (run 1 through 3 post restart)
-1. Verify that processes (Apache, MySQL, Sphinx, batch, memcache) are being relaunched by monit after MANUAL kill (testing crash resurrection).
-1. Verify new publisher account creation. Continue all following tests on this new partner account.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify system restart behaviour (run 1 through 3 post restart)
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that processes (Apache, MySQL, Sphinx, batch, memcache) are being relaunched by monit after MANUAL kill (testing crash resurrection).
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify new publisher account creation. Continue all following tests on this new partner account.
 1. Test email logs for sent new publisher account activation email.
 1. uiConf and file verifications - 
     1. Run through all the uiConfs in the database.
