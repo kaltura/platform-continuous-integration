@@ -60,7 +60,11 @@ Following successful deployment and upgrade of the Kaltura clusters, the test su
 
 The following test cases will be run in the following order, on each cluster deployment (both clean and upgrade).
 Nightly testing should run a complete regression coverage via API client libs, verifying the stability of the latest MASTER branch.   
-
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check space on / partition 
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check space on /web partition
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KDP3 version is correct by comparting KMC's config.ini with the actual last created KDP3 dir on disk.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KMC version is correct by comparting KMC's config.ini with the actual last created KDP3 dir on disk.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KDP3 version is correct by comparting KMC's config.ini with the actual last created HTML5 dir on disk.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that all relevant processes (Apache, MySQL, Sphinx, batch, memcache, monit) are up and running on all machines in the cluster
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that all processes and crons are properly configured to run after system restart
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify HTTPs call redirects for start page, KMC, Admin Console and testme. Perform curl request (with redirect follow) to each of the URLs, and test the response returned as expected:
@@ -75,6 +79,7 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. uiConf and file verifications - 
     1. Run through all the uiConfs in the database.
     1. For each uiConf, run through the uiConf object URLs AND inside the uiConf XML for all referenced file paths (swf, js, image files, etc.) and verify the existence of these files on disk.
+    1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check the kmc.swf and login.swf requests return 200
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Verify simple transcoding: Upload video, see complete transcoding flow finished successfully.
 1. Verify fallback transcoding: Rename the ffmpeg symlink. Upload video, see complete transcoding flow finished successfully. Rename the ffmpeg symlink back.
 1. Verify clipping and trimming API: Clip an entry, verify READY status on the newly created entry.
