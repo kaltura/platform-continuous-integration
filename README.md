@@ -75,27 +75,27 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. uiConf and file verifications - 
     1. Run through all the uiConfs in the database.
     1. For each uiConf, run through the uiConf object URLs AND inside the uiConf XML for all referenced file paths (swf, js, image files, etc.) and verify the existence of these files on disk.
-1. ![test-created]Verify simple transcoding: Upload video, see complete transcoding flow finished successfully.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Verify simple transcoding: Upload video, see complete transcoding flow finished successfully.
 1. Verify fallback transcoding: Rename the ffmpeg symlink. Upload video, see complete transcoding flow finished successfully. Rename the ffmpeg symlink back.
 1. Verify clipping and trimming API: Clip an entry, verify READY status on the newly created entry.
 1. Run all client libraries and their respective unit-tests. (Get build & test script from Eran K)
 1. Create a Local XML DropFolder, copy a file to the folder, test the file was successfully pulled in to Kaltura, transcoded and that the XML metadata exists.
 1. Create a Remote Storage profile against an S3 Bucket, verify that content uploaded gets pushed to the S3 bucket.
-1. ![test-created]Test Bulk Upload XML that includes custom metadata fields and thumbnails.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Test Bulk Upload XML that includes custom metadata fields and thumbnails.
 1. Check email notifications:
 1. Setup email notifications for new entry event
-1. ![test-created] Create a new Entry
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Create a new Entry
 1. Check mail logs to see if email was sent.
-1. ![test-created] Analytics verification
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Analytics verification
 1. Run PhantomJS to play a video using the HTML5 player
 1. Rotate logs and run Analytics crons
-1. ![test-created]Check the report API to see the play count
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Check the report API to see the play count
 1. Check the bandwidth report API to see bandwidth and storage counts
 1. Verify KS Access Control:
 1. Create an AC Profile with KS protection
 1. Assign it to a Video Entry
 1. Curl playManifest to that Entry without a KS, see that the video fails to return
-1. Curl playManifest to that Entry WITH a valid sview KS, see that the video returns
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Curl playManifest to that Entry WITH a valid sview KS, see that the video returns
 1. Verify YouTube distribution (create profile, distribute entry, query for success)
 1. Thumbnail API verification:
     1. *This test will have a stored prepared image to compare against*
@@ -103,7 +103,7 @@ Nightly testing should run a complete regression coverage via API client libs, v
     1. Call the thmbnail API for second 25 of the new entry
     1. Use ImageMagick to compare the returned image against the stored test imaged
     1. If diff returns exact - test passes
-1. ![test-created]Verify Red5 is working -  http://exchange.nagios.org/directory/Plugins/Software/FMS-monitor/details
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Verify Red5 is working -  http://exchange.nagios.org/directory/Plugins/Software/FMS-monitor/details
 1. Verify Player - Use http://phantomjs.org/ to run base tests against player embed, playlist embed, thumbnail embed, and common player scenarios (play, pause, seek)
 
 
