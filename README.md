@@ -60,6 +60,7 @@ Following successful deployment and upgrade of the Kaltura clusters, the test su
 
 The following test cases will be run in the following order, on each cluster deployment (both clean and upgrade).
 Nightly testing should run a complete regression coverage via API client libs, verifying the stability of the latest MASTER branch.   
+
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check space on / partition 
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check space on /web partition
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KDP3 version is correct by comparting KMC's config.ini with the actual last created KDP3 dir on disk.
