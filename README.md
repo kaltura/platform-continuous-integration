@@ -77,7 +77,7 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that processes (Apache, MySQL, Sphinx, batch, memcache) are being relaunched by monit after MANUAL kill (testing crash resurrection).
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify new publisher account creation. Continue all following tests on this new partner account.
 1. Test email logs for sent new publisher account activation email.
-1. uiConf and file verifications - 
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) uiConf and file verifications - 
     1. Run through all the uiConfs in the database.
     1. For each uiConf, run through the uiConf object URLs AND inside the uiConf XML for all referenced file paths (swf, js, image files, etc.) and verify the existence of these files on disk.
     1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check the kmc.swf and login.swf requests return 200
