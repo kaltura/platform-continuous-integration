@@ -91,7 +91,7 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. Check email notifications:
 1. Setup email notifications for new entry event
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Create a new Entry
-1. Check mail logs to see if email was sent.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check mail logs to see if email was sent.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Analytics verification
 1. Run PhantomJS to play a video using the HTML5 player
 1. Rotate logs and run Analytics crons
