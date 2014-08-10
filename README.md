@@ -83,7 +83,7 @@ Nightly testing should run a complete regression coverage via API client libs, v
     1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check the kmc.swf and login.swf requests return 200
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Verify simple transcoding: Upload video, see complete transcoding flow finished successfully.
 1. Verify fallback transcoding: Rename the ffmpeg symlink. Upload video, see complete transcoding flow finished successfully. Rename the ffmpeg symlink back.
-1. Verify clipping and trimming API: Clip an entry, verify READY status on the newly created entry.
+1.![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify clipping and trimming API
 1. Run all client libraries and their respective unit-tests. (Get build & test script from Eran K)
 1. Create a Local XML DropFolder, copy a file to the folder, test the file was successfully pulled in to Kaltura, transcoded and that the XML metadata exists.
 1. Create a Remote Storage profile against an S3 Bucket, verify that content uploaded gets pushed to the S3 bucket.
