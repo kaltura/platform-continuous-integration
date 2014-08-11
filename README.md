@@ -102,14 +102,12 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. Create an AC Profile with KS protection
 1. Assign it to a Video Entry
 1. Curl playManifest to that Entry without a KS, see that the video fails to return
-1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Curl playManifest to that Entry WITH a valid sview KS, see that the video returns
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Curl playManifest to that Entry WITH a valid sview KS, see that the video returns
 1. Verify YouTube distribution (create profile, distribute entry, query for success)
-1. Thumbnail API verification:
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Thumbnail API verification:
     1. *This test will have a stored prepared image to compare against*
-    1. Clone the Fish Aquarium entry
-    1. Call the thmbnail API for second 25 of the new entry
+    1. Call the thmbnail API for second 2 of the new entry
     1. Use ImageMagick to compare the returned image against the stored test imaged
-    1. If diff returns exact - test passes
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Verify Red5 is working -  http://exchange.nagios.org/directory/Plugins/Software/FMS-monitor/details
 1. Verify Player - Use http://phantomjs.org/ to run base tests against player embed, playlist embed, thumbnail embed, and common player scenarios (play, pause, seek)
 
