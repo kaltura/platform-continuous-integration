@@ -2,6 +2,7 @@
 CLUS_LIST="/opt/vhosts/csi/cluster_members"
 
 DB="/opt/vhosts/csi/db/csi.db"
+ALERTS_ADDR="community@kaltura.com"
 rm /tmp/reportme.`date +%d_%m_%Y`.sql
 for i in `cat $CLUS_LIST`;do
 	if echo $i|grep '#' -q ;then
@@ -19,6 +20,14 @@ for i in `cat $CLUS_LIST`;do
 	fi
 	ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "/opt/kaltura/bin/kaltura-base-config.sh /root/kalt.ans && /opt/kaltura/bin/kaltura-batch-config.sh"
 	ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /opt/kaltura/bin/kaltura-sanity.sh 
+	RC=$?
+	if [ $RC -ne 0 ];then 
+		MSG="Sanity on machine $i aborted."
+		if [ $RC -eq 11 ];then
+			MSG="${MSG} Machine out of space. Do something"
+		fi
+		echo $MSG| mail -s "Sanity for machine $i aborted!" $ALERTS_ADDR
+	fi
 	scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$i:"/tmp/$i-reportme.`date +%d_%m_%Y`.sql" /tmp/
 	cat "/tmp/$i-reportme.`date +%d_%m_%Y`.sql" >> /tmp/reportme.`date +%d_%m_%Y`.sql
 done
