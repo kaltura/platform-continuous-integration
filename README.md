@@ -70,9 +70,10 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that all processes and crons are properly configured to run after system restart
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify HTTPs call redirects for start page, KMC, Admin Console and testme. Perform curl request (with redirect follow) to each of the URLs, and test the response returned as expected:
     1. https://[DOMAIN]/  --- Verify Start Page
-    1. https://[DOMAIN]/api_v3/testme/  --- Verify TestMe Console Page
-    1. https://[DOMAIN]/index.php/kmc  --- Verify KMC 
-    1. https://[DOMAIN]/admin_console/  --- Verify Admin Console
+    1. https://[DOMAIN]/api_v3/testme/  --- Verify TestMe Console URL
+    1. https://[DOMAIN]/index.php/kmc  --- Verify KMC URL
+    1. https://[DOMAIN]/admin_console/  --- Verify Admin Console URL
+    1. https://[DOMAIN]/apps/studio  --- Verify Universal Studio URL
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify system restart behaviour (run 1 through 3 post restart)
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that processes (Apache, MySQL, Sphinx, batch, memcache) are being relaunched by monit after MANUAL kill (testing crash resurrection).
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify new publisher account creation. Continue all following tests on this new partner account.
@@ -82,6 +83,7 @@ Nightly testing should run a complete regression coverage via API client libs, v
     1. For each uiConf, run through the uiConf object URLs AND inside the uiConf XML for all referenced file paths (swf, js, image files, etc.) and verify the existence of these files on disk.
     1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check the kmc.swf and login.swf requests return 200
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Verify simple transcoding: Upload video, see complete transcoding flow finished successfully.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Verify reconversion: reconvert an existing asset, see complete transcoding flow finished successfully.
 1. Verify fallback transcoding: Rename the ffmpeg symlink. Upload video, see complete transcoding flow finished successfully. Rename the ffmpeg symlink back.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify clipping and trimming API
 1. Run all client libraries and their respective unit-tests. (Get build & test script from Eran K)
