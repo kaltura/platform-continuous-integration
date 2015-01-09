@@ -77,6 +77,8 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify system restart behaviour (run 1 through 3 post restart)
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that processes (Apache, MySQL, Sphinx, batch, memcache) are being relaunched by monit after MANUAL kill (testing crash resurrection).
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify new publisher account creation. Continue all following tests on this new partner account.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify profile ID creation.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify profile ID delete.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Test email logs for sent new publisher account activation email.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) uiConf and file verifications - 
     1. Run through all the uiConfs in the database.
@@ -92,7 +94,6 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. Create a Local XML DropFolder, copy a file to the folder, test the file was successfully pulled in to Kaltura, transcoded and that the XML metadata exists.
 1. Create a Remote Storage profile against an S3 Bucket, verify that content uploaded gets pushed to the S3 bucket.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Test Bulk Upload XML that includes custom metadata fields and thumbnails.
-1. Check email notifications:
 1. Setup email notifications for new entry event
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Create a new Entry
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check mail logs to see if email was sent.
