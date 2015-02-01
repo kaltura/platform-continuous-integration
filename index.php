@@ -49,55 +49,59 @@ function draw(arr)
 
 <?php
 
-
-function aasort (&$array, $key) 
+function version_compare1($ao, $bo)
 {
-    $sorter=array();
-    $ret=array();
-    reset($array);
-    foreach ($array as $ii => $va) {
-        $sorter[$ii]=$va[$key];
-    }
-    asort($sorter);
-    foreach ($sorter as $ii => $va) {
-        $ret[$ii]=$array[$ii];
-    }
-    $array=$ret;
-}
 
-//aasort($your_array,"order");
+    $a=$ao[0];
+    $b=$bo[0];
+    $a = explode(".", $a); //Split version into pieces and remove trailing .0
+    $b = explode(".", $b); //Split version into pieces and remove trailing .0
+    foreach ($a as $depth => $aVal){ //Iterate over each piece of A
+        if (isset($b[$depth])){ //If B matches A to this depth, compare the values
+            if ($aVal > $b[$depth]) return 1; //Return A > B
+            else if ($aVal < $b[$depth]) return -1; //Return B > A
+            //An equal result is inconclusive at this point
+        }else{ //If B does not match A to this depth, then A comes after B in sort order
+            return 1; //so return A > B
+        }
+    }
+    //At this point, we know that to the depth that A and B extend to, they are equivalent.
+    //Either the loop ended because A is shorter than B, or both are equal.
+    return (count($a) < count($b)) ? -1 : 0;
+} 
+
+
 
 
 
 $script_name=basename(__FILE__);
 require_once(dirname($script_name).DIRECTORY_SEPARATOR.'db_conn.inc');
 $db=new SQLite3($dbfile,SQLITE3_OPEN_READONLY) or die("Unable to connect to database $dbfile");
-if (!isset($_GET['kaltura_ver'])){
-        $result=$db->query("select kaltura_version from csi_log order by kaltura_version desc limit 1");
-        $res = $result->fetchArray(SQLITE3_ASSOC);
-        $kaltura_ver=$res['kaltura_version'];
-}else{
-        $kaltura_ver=$_GET['kaltura_ver'];
-}
 $db=new SQLite3($dbfile,SQLITE3_OPEN_READONLY) or die("Unable to connect to database $dbfile");
 $result=$db->query("select kaltura_version,failed,successful from success_rates order by kaltura_version");
-//$result=$db->query("select success_rates.kaltura_version,success_rates.failed,success_rates.successful from success_rates INNER JOIN csi_log ON success_rates.kaltura_version=csi_log.kaltura_version order by csi_log.create_time");
 $databary=array();
-$databary [] = Array ("release", "test success %");
 $version=Array();
 while($rates_res = $result->fetchArray(SQLITE3_ASSOC)){
         $databary [] = Array ($rates_res['kaltura_version'],round($rates_res['successful']/($rates_res['successful']+$rates_res['failed'])*100));
         $versions[]=$rates_res['kaltura_version'];
-        if ($rates_res['kaltura_version']===$kaltura_ver){
-                $successfuln=$rates_res['successful'];
-                $failedn=$rates_res['failed'];
-        }
+
 }
-//aasort($databary,'kaltura_version');
-//echo "<pre>";
-//usort($databary,'version_compare');
+usort($versions,'version_compare');
+if (!isset($_GET['kaltura_ver'])){
+	$kaltura_ver=$versions[count($versions) -1];
+}else{
+        $kaltura_ver=$_GET['kaltura_ver'];
+}
+$result=$db->query("select kaltura_version,failed,successful from success_rates where kaltura_version='$kaltura_ver' order by kaltura_version");
+while($res = $result->fetchArray(SQLITE3_ASSOC)){
+                $successfuln=$res['successful'];
+                $failedn=$res['failed'];
+}
+echo "<pre>";
+usort($databary,'version_compare1');
 //var_dump($databary);
-//echo "</pre>";
+array_unshift($databary,Array ("release", "test success %"));
+echo "</pre>";
 $js_array = json_encode($databary);
 ?>
 <script>
@@ -159,6 +163,9 @@ echo '<h3 class=\"csi\">Overall test status:<h3>
 </TR>
 <TR>
     <TD><b>NodeJS client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsNodeJS"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsNodeJS.svg?branch=master"></a></TD>
+</TR>
+<TR>
+    <TD><b>Python client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPython"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPython.svg?branch=master"></a></TD>
 </TR>
 </TABLE>
 ';
