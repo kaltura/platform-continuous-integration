@@ -88,6 +88,7 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Verify reconversion: reconvert an existing asset, see complete transcoding flow finished successfully.
 1. Verify fallback transcoding: Rename the ffmpeg symlink. Upload video, see complete transcoding flow finished successfully. Rename the ffmpeg symlink back.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify clipping and trimming API
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify clipapp index page loads
 1. Run all client libraries and their respective unit-tests. (Get build & test script from Eran K)
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Enable dropfolder plugin
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Create a Local DropFolder 
