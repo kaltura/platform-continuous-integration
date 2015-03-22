@@ -30,9 +30,9 @@ while read CLIENT;do
 	cd $TEMP_CHECKOUT/$REPO
 	SERVER_BRANCH=`rpm -qa kaltura-base --queryformat %{version}`
 	if git branch |grep -q $SERVER_BRANCH ;then
-		git checkout `rpm -qa kaltura-base --queryformat %{version}` 
+		git checkout $SERVER_BRANCH 
 	else
-		git checkout -b `rpm -qa kaltura-base --queryformat %{version}` 
+		git checkout -b $SERVER_BRANCH 
 	fi
 	git pull origin $SERVER_BRANCH
 	mkdir -p $TEMP_CHECKOUT/$REPO/$DIR/
