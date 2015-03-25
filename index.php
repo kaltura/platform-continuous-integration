@@ -141,34 +141,34 @@ while($res = $result->fetchArray(SQLITE3_ASSOC)){
 }
 $arr=json_encode($data);
 $db->close();
-echo '<h3 class=\"csi\">Overall test status:<h3>
+echo '<h3 class=\"csi\">Current Travis CI clientlib status:<h3>
 <TABLE>
 <TR>
-    <TD><b>CLI client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCLI"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCLI.svg?branch=master"></a></TD>
+    <TD><b>CLI client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCLI"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCLI.svg?branch='.$kaltura_ver.'"></a></TD>
 </TR>
 <TR>
-    <TD><b>Java client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsJava"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsJava.svg?branch=master"></a></TD>
+    <TD><b>Java client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsJava"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsJava.svg?branch='.$kaltura_ver.'"></a></TD>
 </TR>
 <TR>
-    <TD><b>PHP 5 client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPHP"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPHP.svg?branch=master"></a></TD>
+    <TD><b>PHP 5 client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPHP"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPHP.svg?branch='.$kaltura_ver.'"></a></TD>
 </TR>
 <TR>
-    <TD><b>PHP 5_3 client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPHP53"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPHP53.svg?branch=master"></a></TD>
+    <TD><b>PHP 5_3 client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPHP53"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPHP53.svg?branch='.$kaltura_ver.'"></a></TD>
 </TR>
 <TR>
-    <TD><b>ZF client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsZF"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsZF.svg?branch=master"></a></TD>
+    <TD><b>ZF client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsZF"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsZF.svg?branch='.$kaltura_ver.'"></a></TD>
 </TR>
 <TR>
-    <TD><b>Ruby client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsRuby"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsRuby.svg?branch=master"></a></TD>
+    <TD><b>Ruby client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsRuby"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsRuby.svg?branch='.$kaltura_ver.'"></a></TD>
 </TR>
 <TR>
-    <TD><b>NodeJS client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsNodeJS"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsNodeJS.svg?branch=master"></a></TD>
+    <TD><b>NodeJS client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsNodeJS"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsNodeJS.svg?branch='.$kaltura_ver.'"></a></TD>
 </TR>
 <TR>
-    <TD><b>Python client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPython"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPython.svg?branch=master"></a></TD>
+    <TD><b>Python client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPython"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPython.svg?branch='.$kaltura_ver.'"></a></TD>
 </TR>
 </TABLE>
-';
+<h3 class=\"csi\">Overall test status:<h3>';
 ?>
 <script>
       google.load('visualization', '1', {'packages': ['table','map']});
