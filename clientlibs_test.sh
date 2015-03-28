@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh -e
 API_HOST=54.163.254.64
 SERVICE_URL="http://$API_HOST"
 LOG_DIR="~/kaltura/log"
@@ -30,20 +30,22 @@ while read CLIENT;do
 	cd $TEMP_CHECKOUT/$REPO
 	#SERVER_BRANCH="master"
 	SERVER_BRANCH=`rpm -qa kaltura-base --queryformat %{version}`
-	if git branch |grep -q $SERVER_BRANCH ;then
-		git checkout $SERVER_BRANCH 
-	else
-		git checkout -b $SERVER_BRANCH 
-	fi
-	mkdir -p $TEMP_CHECKOUT/$REPO/$DIR/
-	cp -r $LIB_PREFIX_DIR/* $TEMP_CHECKOUT/$REPO/
-	CONF_FILES=`find $TEMP_CHECKOUT/$REPO/$DIR  -type f -name "*\.template*"`
-	for TMPL_CONF_FILE in $CONF_FILES;do
-        	CONF_FILE=`echo $TMPL_CONF_FILE | sed 's@\(.*\)\.template\(.*\)@\1\2@'`
-                cp  $TMPL_CONF_FILE $CONF_FILE
+	for BRANCH in master $SERVER_BRANCH;do
+		if git branch |grep -q $BRANCH ;then
+			git checkout $BRANCH 
+		else
+			git checkout -b $BRANCH 
+		fi
+		mkdir -p $TEMP_CHECKOUT/$REPO/$DIR/
+		cp -r $LIB_PREFIX_DIR/* $TEMP_CHECKOUT/$REPO/
+		CONF_FILES=`find $TEMP_CHECKOUT/$REPO  -type f -name "*\.template*"`
+		for TMPL_CONF_FILE in $CONF_FILES;do
+			CONF_FILE=`echo $TMPL_CONF_FILE | sed 's@\(.*\)\.template\(.*\)@\1\2@'`
+			cp  $TMPL_CONF_FILE $CONF_FILE
+		done
+		find $TEMP_CHECKOUT/$REPO -type f -exec sed -i -e "s#@YOUR_PARTNER_ID@#$YOUR_PARTNER_ID#g" -e "s#@PARTNER_ID@#$YOUR_PARTNER_ID#g" -e "s#@YOUR_USER_SECRET@#$YOUR_USER_SECRET#g" -e "s#@YOUR_ADMIN_SECRET@#$YOUR_ADMIN_SECRET#g" -e "s#@API_HOST@#$API_HOST#g" -e "s#@LOG_DIR@#$LOG_DIR#g" -e "s#@SERVICE_URL@#$SERVICE_URL#g" {} \;
+		cd $TEMP_CHECKOUT/$REPO && git add * && git commit -a -m "New clientlib ver" && git pull origin $BRANCH && git push origin $BRANCH
 	done
-	find $TEMP_CHECKOUT/$REPO -type f -exec sed -i -e "s#@YOUR_PARTNER_ID@#$YOUR_PARTNER_ID#g" -e "s#@PARTNER_ID@#$YOUR_PARTNER_ID#g" -e "s#@YOUR_USER_SECRET@#$YOUR_USER_SECRET#g" -e "s#@YOUR_ADMIN_SECRET@#$YOUR_ADMIN_SECRET#g" -e "s#@API_HOST@#$API_HOST#g" -e "s#@LOG_DIR@#$LOG_DIR#g" -e "s#@SERVICE_URL@#$SERVICE_URL#g" {} \;
-	cd $TEMP_CHECKOUT/$REPO && git add * && git commit -a -m "New clientlib ver" && git pull origin $SERVER_BRANCH && git push origin $SERVER_BRANCH
 	cd $TEMP_CHECKOUT
 done < $REPO_RC_FILE
 
