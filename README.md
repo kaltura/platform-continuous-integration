@@ -95,10 +95,11 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. Create a Local XML DropFolder, copy a file to the folder, test the file was successfully pulled in to Kaltura, transcoded and that the XML metadata exists.
 1. Create a Remote Storage profile against an S3 Bucket, verify that content uploaded gets pushed to the S3 bucket.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Test Bulk Upload XML that includes custom metadata fields and thumbnails.
-1. Setup email notifications for new entry event
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Setup email notifications for new entry event
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Create a new Entry
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check mail logs to see if email was sent.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Analytics verification
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Upload captions
 1. Run PhantomJS to play a video using the HTML5 player
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Check the report API to see the play count
 1. Check the bandwidth report API to see bandwidth and storage counts
