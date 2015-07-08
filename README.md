@@ -94,8 +94,9 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Create a Local DropFolder 
 1. Create a Local XML DropFolder, copy a file to the folder, test the file was successfully pulled in to Kaltura, transcoded and that the XML metadata exists.
 1. Create a Remote Storage profile against an S3 Bucket, verify that content uploaded gets pushed to the S3 bucket.
-1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Test Bulk Upload XML that includes custom metadata fields and thumbnails.
-1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Setup email notifications for new entry event
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Test Bulk Upload XML that includes custom metadata fields and thumbnails.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Setup email notification for new entry event
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Setup HTTP notification for entry change event
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Create a new Entry
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check mail logs to see if email was sent.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Analytics verification
