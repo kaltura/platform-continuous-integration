@@ -62,10 +62,10 @@ The following test cases will be run in the following order, on each cluster dep
 Nightly testing should run a complete regression coverage via API client libs, verifying the stability of the latest MASTER branch.   
 
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check space on / partition 
-1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check space on /web partition
-1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KDP3 version is correct by comparting KMC's config.ini with the actual last created KDP3 dir on disk.
-1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KMC version is correct by comparting KMC's config.ini with the actual last created KDP3 dir on disk.
-1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KDP3 version is correct by comparting KMC's config.ini with the actual last created HTML5 dir on disk.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check space on web partition
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KDP3 version is correct by comparing KMC's config.ini with the actual last created KDP3 dir on disk.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KMC version is correct by comparing KMC's config.ini with the actual last created KDP3 dir on disk.
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Check KDP3 version is correct by comparing KMC's config.ini with the actual last created HTML5 dir on disk.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that all relevant processes (Apache, MySQL, Sphinx, batch, memcache, monit) are up and running on all machines in the cluster
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify that all processes and crons are properly configured to run after system restart
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify HTTPs call redirects for start page, KMC, Admin Console and testme. Perform curl request (with redirect follow) to each of the URLs, and test the response returned as expected:
@@ -89,11 +89,9 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. Verify fallback transcoding: Rename the ffmpeg symlink. Upload video, see complete transcoding flow finished successfully. Rename the ffmpeg symlink back.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify clipping and trimming API
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Verify clipapp index page loads
-1. Run all client libraries and their respective unit-tests. (Get build & test script from Eran K)
+1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Run all client libraries and their respective unit-tests
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Enable dropfolder plugin
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Create a Local DropFolder 
-1. Create a Local XML DropFolder, copy a file to the folder, test the file was successfully pulled in to Kaltura, transcoded and that the XML metadata exists.
-1. Create a Remote Storage profile against an S3 Bucket, verify that content uploaded gets pushed to the S3 bucket.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Test Bulk Upload XML that includes custom metadata fields and thumbnails.
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Setup email notification for new entry event
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Setup HTTP notification for entry change event
@@ -102,20 +100,21 @@ Nightly testing should run a complete regression coverage via API client libs, v
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Analytics verification
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Upload captions
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Search string in captions and entry metadata
-1. Run PhantomJS to play a video using the HTML5 player
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Check the report API to see the play count
-1. Check the bandwidth report API to see bandwidth and storage counts
-1. Verify KS Access Control:
-1. Create an AC Profile with KS protection
-1. Assign it to a Video Entry
-1. Curl playManifest to that Entry without a KS, see that the video fails to return
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Curl playManifest to that Entry WITH a valid sview KS, see that the video returns
-1. Verify YouTube distribution (create profile, distribute entry, query for success)
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png) Thumbnail API verification:
     1. *This test will have a stored prepared image to compare against*
     1. Call the thmbnail API for second 2 of the new entry
     1. Use ImageMagick to compare the returned image against the stored test imaged
 1. ![test-created](http://kaltura.github.io/platform-install-packages/images/checkmark.png)Verify Red5 is working -  http://exchange.nagios.org/directory/Plugins/Software/FMS-monitor/details
+1. Verify YouTube distribution (create profile, distribute entry, query for success)
+1. Check the bandwidth report API to see bandwidth and storage counts
+1. Verify KS Access Control:
+1. Create an AC Profile with KS protection
+1. Assign it to a Video Entry
+1. Curl playManifest to that Entry without a KS, see that the video fails to return
+1. Create a Local XML DropFolder, copy a file to the folder, test the file was successfully pulled in to Kaltura, transcoded and that the XML metadata exists.
+1. Create a Remote Storage profile against an S3 Bucket, verify that content uploaded gets pushed to the S3 bucket.
 1. Verify Player - Use http://phantomjs.org/ to run base tests against player embed, playlist embed, thumbnail embed, and common player scenarios (play, pause, seek)
 
 
