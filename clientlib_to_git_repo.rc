@@ -1,24 +1,11 @@
-<<<<<<< HEAD
+#KalturaGeneratedAPIClientsCLI=cli
 KalturaGeneratedAPIClientsPHP=php5
+KalturaGeneratedAPIClientsRuby=ruby
+KalturaGeneratedAPIClientsJava=java
 KalturaGeneratedAPIClientsZF=php5Zend
 KalturaGeneratedAPIClientsPHP53=php53
-KalturaGeneratedAPIClientsCLI=cli
-KalturaGeneratedAPIClientsRuby=ruby
 KalturaGeneratedAPIClientsNodeJS=node
-KalturaGeneratedAPIClientsJava=java
-#KalturaGeneratedAPIClientsAndroid=android
-#KalturaGeneratedAPIClientsObjectiveC=objc
 KalturaGeneratedAPIClientsPython=python
-=======
-#KalturaGeneratedAPIClientsPHP=php
-#KalturaGeneratedAPIClientsZF=php5Zend
-#KalturaGeneratedAPIClientsPHP53=php53
-KalturaGeneratedAPIClientsCLI=cli
-#KalturaGeneratedAPIClientsRuby=ruby
-#KalturaGeneratedAPIClientsNodeJS=node
-#KalturaGeneratedAPIClientsJava=java
 #KalturaGeneratedAPIClientsAndroid=android
-#KalturaGeneratedAPIClientsObjectiveC=objc
-#KalturaGeneratedAPIClientsPython=python
->>>>>>> e5e45ecbebf98652ba0853ed7bc159c69981c39f
-#KalturaGeneratedAPIClientsCsharp=csharp
+KalturaGeneratedAPIClientsObjectiveC=objc
+KalturaGeneratedAPIClientsCsharp=csharp
