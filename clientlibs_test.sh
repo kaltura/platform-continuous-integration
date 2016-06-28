@@ -7,7 +7,7 @@ YOUR_PARTNER_ID=101
 YOUR_USER_SECRET=""
 YOUR_ADMIN_SECRET=""
 echo "Generating clientlibs.. be patient."
-while read CLIENT;do php /opt/kaltura/app/generator/generate.php $CLIENT;done < /opt/kaltura/app/configurations/generator.all.ini
+while read CLIENT;do php /opt/kaltura/clients-generator/exec.php $CLIENT;done < /opt/kaltura/clients-generator/config/generator.all.ini
 REPO_RC_FILE=`dirname $0`/clientlib_to_git_repo.rc
 if [ -r $REPO_RC_FILE ];then
 	. $REPO_RC_FILE
