@@ -44,7 +44,7 @@ while read CLIENT;do
 			cp  $TMPL_CONF_FILE $CONF_FILE
 		done
 		find $TEMP_CHECKOUT/$REPO -type f -exec sed -i -e "s#@YOUR_PARTNER_ID@#$YOUR_PARTNER_ID#g" -e "s#@PARTNER_ID@#$YOUR_PARTNER_ID#g" -e "s#@YOUR_USER_SECRET@#$YOUR_USER_SECRET#g" -e "s#@YOUR_ADMIN_SECRET@#$YOUR_ADMIN_SECRET#g" -e "s#@API_HOST@#$API_HOST#g" -e "s#@LOG_DIR@#$LOG_DIR#g" -e "s#@SERVICE_URL@#$SERVICE_URL#g" {} \;
-		cd $TEMP_CHECKOUT/$REPO && git add * && git commit -a -m "New clientlib ver" && git pull origin $BRANCH && git push origin $BRANCH
+		cd $TEMP_CHECKOUT/$REPO && git add * ; git commit -a -m "New clientlib ver" && git pull origin $BRANCH && git push origin $BRANCH
 	done
 	cd $TEMP_CHECKOUT
 done < $REPO_RC_FILE
