@@ -9,3 +9,4 @@ KalturaGeneratedAPIClientsPython=python
 #KalturaGeneratedAPIClientsAndroid=android
 KalturaGeneratedAPIClientsObjectiveC=objc
 KalturaGeneratedAPIClientsCsharp=csharp
+KalturaGeneratedAPIClientsSwift=swift
