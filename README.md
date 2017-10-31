@@ -50,6 +50,10 @@ If you wish to generate and test the API clients as part of the CI process:
 *NOTE: The script expects these repos to be hosted on GitHub and at Kaltura, we use Travis CI for the actual testing.
 That said, if you intend to use a different source control [or just Git but not GitHub] or a different CI service, this can be achieved by making minor changes to $BASE_DIR/clientlibs_test.sh.*
 
+### Web interface
+A simple web I/F for showing the CI results is included in this repo [see index.php]. 
+This can be placed on the docroot of any web server that supports PHP 5.3 and above. 
+Note that index.php requires the PHP SQLite3 extension to be enabled.
 
 ## The Test Suites
 **All API calls and apps will be loaded over SSL.**
