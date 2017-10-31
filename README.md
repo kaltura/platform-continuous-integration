@@ -20,40 +20,17 @@ We’ve also listed some key advantages in our specific project -
 * Allow contributors to make changes and additions with a higher level of security, knowing pull-requests are tested as part of the whole system in production mode, before being merged.
 * Provide elaborate platform test reports before entering official manual QA phase.
 
-## CI Workflow
-This will be the general flow of each CI run.   
+## General Flow
 
-#### Build Packages & Deploy to Install Repository
+## Bootstrapping
+The CI makes use answer files to achieve a unattended deployment.
+Answer file for RPM based deployments:
+https://github.com/kaltura/platform-install-packages/blob/master/doc/kaltura.template.ans
 
-1. Versions of packages included in the new release will be updated in spec files.
-1. Additional required steps for the upgrade [SQL alter scripts, additional token replacements, etc] will be added to the postinst according to need
-1. The packages will be built
-1. Packages are uploaded to the repository using an SSH key
-1. Packages are distributed to Akamai
+Answer file for deb based deployments:
+https://github.com/kaltura/platform-install-packages/blob/master/doc/install-kaltura-deb-based.md#unattended-installation
 
-#### Deploy test clusters on AWS
-Following successful build, AMI instances are launched via EC2 CLI API, and Kaltura will be deployed on them.    
-All deployments will be done using self-signed SSL certificates.   
-
-##### Clean scenario: clean images of the following structure:
-
-* 2 fronts behind an HTTPs LB (a Linux machine running Apache configured to use the ProxyPass module)
-* 1 Admin Console front
-* 2 batch servers
-* 2 sphinx servers
-* 1 MySQL DB server (shall we also test replication?)
-
-##### Upgrade scenario: images of the following roles with the previous version installed:
-
-* 2 fronts behind an HTTPs LB (a Linux machine running Apache configured to use the ProxyPass module)
-* 1 Admin Console front
-* 2 batch servers
-* 2 sphinx servers
-* 1 MySQL DB server (shall we also test replication?)
-
-#### Test and Report
-Following successful deployment and upgrade of the Kaltura clusters, the test suites will be ran, and build & test reports will be generated.
-
+Edit the templates to reflect your settings and place the file under /etc/kalt.ans. Bear in mind that this file contains sensitive info and should therefore only be readable and writable by super users.
 
 ## The Test Suites
 **All API calls and apps will be loaded over SSL.**

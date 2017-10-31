@@ -23,9 +23,9 @@ for i in `cat $RPM_CLUS_LIST`;do
 
 	fi
 	if ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no rpm -q kaltura-sphinx;then
-		ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $KALTURA_BASE/bin/kaltura-sphinx-config.sh /root/kalt.ans
+		ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $KALTURA_BASE/bin/kaltura-sphinx-config.sh /etc/kalt.ans
 	fi
-	ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$KALTURA_BASE/bin/kaltura-base-config.sh /root/kalt.ans && $KALTURA_BASE/bin/kaltura-batch-config.sh && /etc/init.d/kaltura-batch stop"
+	ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$KALTURA_BASE/bin/kaltura-base-config.sh /etc/kalt.ans && $KALTURA_BASE/bin/kaltura-batch-config.sh && /etc/init.d/kaltura-batch stop"
 	ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $KALTURA_BASE/bin/kaltura-sanity.sh 
 	RC=$?
 	if [ $RC -ne 0 ];then 
@@ -42,15 +42,15 @@ for i in `cat $DEB_CLUS_LIST`;do
 	if echo $i|grep '#' -q ;then
 		continue
 	fi
-	ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "aptitude update && /root/kalt.ans && aptitude -y dist-upgrade \"~Nkaltura\""
+	ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "aptitude update && /etc/kalt.ans && aptitude -y dist-upgrade \"~Nkaltura\""
 	if [ -z "$VERSION" ];then
 		VERSION=`ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "dpkg-query -W -f'${Version}' kaltura-base|awk -F "-" '{print $1}'" `
 	fi
 	if ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no dpkg -l kaltura-batch;then
-		ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "/root/kalt.ans && export DEBIAN_FRONTEND=noninteractive; dpkg-reconfigure kaltura-base && dpkg-reconfigure kaltura-batch" 
+		ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "/etc/kalt.ans && export DEBIAN_FRONTEND=noninteractive; dpkg-reconfigure kaltura-base && dpkg-reconfigure kaltura-batch" 
 	fi
 	if ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no dpkg -l kaltura-front;then
-		ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "/root/kalt.ans && dpkg-reconfigure kaltura-base && dpkg-reconfigure kaltura-front" 
+		ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "/etc/kalt.ans && dpkg-reconfigure kaltura-base && dpkg-reconfigure kaltura-front" 
 	fi
 	ssh root@$i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $KALTURA_BASE/bin/kaltura-sanity.sh 
 	RC=$?
