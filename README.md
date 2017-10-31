@@ -22,6 +22,7 @@ We've also listed some key advantages in our specific project -
 
 ## Bootstrapping
 The CI makes use of answer files to achieve an unattended deployment.
+
 An answer file template for RPM based deployments can be obtained here:
 https://github.com/kaltura/platform-install-packages/blob/master/doc/kaltura.template.ans
 
