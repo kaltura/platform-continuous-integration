@@ -1,6 +1,6 @@
 <link type="text/css" href="css/csi.css" rel="Stylesheet" />
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/jquery.js"></script>
+ <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js"></script>
 <html>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
@@ -82,6 +82,7 @@ $result=$db->query("select kaltura_version,failed,successful from success_rates 
 $databary=array();
 $version=Array();
 while($rates_res = $result->fetchArray(SQLITE3_ASSOC)){
+	error_log(print_r($rates_res,true),3,'/tmp/log');
         $databary [] = Array ($rates_res['kaltura_version'],round($rates_res['successful']/($rates_res['successful']+$rates_res['failed'])*100));
         $versions[]=$rates_res['kaltura_version'];
 
@@ -111,7 +112,7 @@ google.setOnLoadCallback(function(){ drawChart(<?php echo $js_array?>) });
 <?php
 echo "<title>CSI Kaltura - $kaltura_ver</title>
 <h1 class=\"csi\">CSI Dashboard</h1>
-<div id=\"chart_div\" style=\"width: 900px; height: 250px;\"></div>
+<div id=\"chart_div\" style=\"width: 1500px; height: 250px;\"></div>
 <h3 class=\"csi\">Release: $kaltura_ver </h3>
 
 <div id=\"jump\" name=\"jump\">
@@ -141,10 +142,10 @@ while($res = $result->fetchArray(SQLITE3_ASSOC)){
 }
 $arr=json_encode($data);
 $db->close();
-echo '<h3 class=\"csi\">Current Travis CI clientlib status:<h3>
+echo '<h3 class=\"csi\">Current Travis CI build status:<h3>
 <TABLE>
 <TR>
-    <TD><b>CLI client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCLI"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCLI.svg?branch='.$kaltura_ver.'"></a></TD>
+    <!--TD><b>CLI client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCLI"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCLI.svg?branch='.$kaltura_ver.'"></a></TD-->
 </TR>
 <TR>
     <TD><b>Java client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsJava"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsJava.svg?branch='.$kaltura_ver.'"></a></TD>
@@ -166,6 +167,31 @@ echo '<h3 class=\"csi\">Current Travis CI clientlib status:<h3>
 </TR>
 <TR>
     <TD><b>Python client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPython"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsPython.svg?branch='.$kaltura_ver.'"></a></TD>
+</TR>
+<TR>
+    <TD><b>C# client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCsharp"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsCsharp.svg?branch='.$kaltura_ver.'"></a></TD>
+</TR>
+<TR>
+    <TD><b>Objective C client libs:</b></TD><TD><a href="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsObjectiveC"><img src="https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsObjectiveC.svg?branch='.$kaltura_ver.'"></a></TD>
+</TR>
+<TR>
+    <TD><b>Nginx VOD module:</b></TD><TD><a href="https://travis-ci.org/kaltura/nginx-vod-module"><img src="https://travis-ci.org/kaltura/nginx-vod-module.svg?branch=master"></a></TD>
+</TR>
+<TR>
+<TR>
+    <TD><b>Player SDK iOS:</b></TD><TD><a href="https://travis-ci.org/kaltura/player-sdk-native-ios"><img src="https://travis-ci.org/kaltura/player-sdk-native-ios.svg?branch=master"></a></TD>
+</TR>
+<TR>
+    <TD><b>Player SDK Android:</b></TD><TD><a href="https://travis-ci.org/kaltura/player-sdk-native-android"><img src="https://travis-ci.org/kaltura/player-sdk-native-android.svg?branch=master"></a></TD>
+</TR>
+<TR>
+    <TD><b>Nginx Secure Token module:</b></TD><TD><a href="https://travis-ci.org/kaltura/nginx-secure-token-module"><img src="https://travis-ci.org/kaltura/nginx-secure-token-module.svg?branch=master"></a></TD>
+</TR>
+<TR>
+    <TD><b>Nginx Parallel module:</b></TD><TD><a href="https://travis-ci.org/kaltura/nginx-parallel-module"><img src="https://travis-ci.org/kaltura/nginx-parallel-module.svg?branch=master"></a></TD>
+</TR>
+<TR>
+    <TD><b>Nginx Akamai Token Validate module:</b></TD><TD><a href="https://travis-ci.org/kaltura/nginx-akamai-token-validate-module"><img src="https://travis-ci.org/kaltura/nginx-akamai-token-validate-module.svg?branch=master"></a></TD>
 </TR>
 </TABLE>
 <h3 class=\"csi\">Overall test status:<h3>';

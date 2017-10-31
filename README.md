@@ -13,24 +13,43 @@ The Continuous Integration system will be responsible for the automation of the 
 
 ## Why we need a CI system?
 An automatic approach to the build, test and release process has many advantages, most prominently, it significantly reduces the time to release new packages and verifies that packages were fully tested before being used in production.
-We’ve also listed some key advantages in our specific project -   
+We've also listed some key advantages in our specific project -   
 
 * Release more often, faster, and provide nightly builds for advanced platform testers.
 * Ensure new commits do not break existing functionality on the master branch.
 * Allow contributors to make changes and additions with a higher level of security, knowing pull-requests are tested as part of the whole system in production mode, before being merged.
 * Provide elaborate platform test reports before entering official manual QA phase.
 
-## General Flow
-
 ## Bootstrapping
-The CI makes use answer files to achieve a unattended deployment.
-Answer file for RPM based deployments:
+The CI makes use of answer files to achieve an unattended deployment.
+An answer file template for RPM based deployments can be obtained here:
 https://github.com/kaltura/platform-install-packages/blob/master/doc/kaltura.template.ans
 
-Answer file for deb based deployments:
+An answer file template for deb based deployments can be obtained here:
 https://github.com/kaltura/platform-install-packages/blob/master/doc/install-kaltura-deb-based.md#unattended-installation
 
-Edit the templates to reflect your settings and place the file under /etc/kalt.ans. Bear in mind that this file contains sensitive info and should therefore only be readable and writable by super users.
+- Edit the templates to reflect your settings and place the file under /etc/kalt.ans on all machines you plan to use for running the CI. Bear in mind that this file contains sensitive info and should therefore only be readable and writable by super users.
+
+- Create $BASE_DIR/rpm_cluster_members and $BASE_DIR/deb_cluster_members. These should contain a list of hosts, separated by newlines, like so:
+```
+my.machine0
+my.machine1
+my.machine2
+```
+
+- Use $BASE_DIR/csi.sql to create an SQLite3 DB under $BASE_DIR/db/csi.db. 
+
+- Edit $BASE_DIR/run_sanity.sh and set the needed params. 
+
+### Generating and testing API clients
+
+If you wish to generate and test the API clients as part of the CI process: 
+- In $BASE_DIR/run_sanity.sh, set TEST_CLIENTS to 'Y' and set CSI_CLIENT_GENERATING_HOST to the host you wish to generate the clients from.
+- Edit clientlib_to_git_repo.rc so that it lists the GitHub repos you set up for hosting the generated clients.
+
+*NOTE: The script expects these repos to be hosted on GitHub and at Kaltura, we use Travis CI for the actual testing.
+That said, if you intend to use a different source control [or just Git but not GitHub] or a different CI service, this can be achieved by making minor changes to $BASE_DIR/clientlibs_test.sh.*
+
 
 ## The Test Suites
 **All API calls and apps will be loaded over SSL.**

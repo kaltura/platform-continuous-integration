@@ -148,24 +148,6 @@ install_kalt_cluster()
 
 }
 
-setup_nfs_mount()
-{
-	NODE=$1
-	NFS_MACH=$2
-	START=`date +%s.%N`
-	#ssh -t -l$EC2_USR $NODE -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo /opt/kaltura/bin/kaltura-nfs-client-config.sh $NFS_MACH kaltura.dev apache kaltura"
-	ssh -t -lec2-user 54.81.215.45 -i/home/csi/csi.pem -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no 'sudo sed -i  "s@^[0-9.a-z]*.*\(:/opt/kaltura/web /opt/kaltura/web nfs4\)@75.101.174.186\1@" /etc/fstab'
-	ssh -t -l$EC2_USR $NODE -i$PEM_CRT_PATH $SSH_QUIET_OPTS "sudo mount /opt/kaltura/web"
-
-	RC=$?	
-	END=`date +%s.%N`
-	TOTAL_T=`bc <<< $TIME`
-	if [ $RC -eq 0 ];then
-		report "setup_nfs_mount()" $RC "Success:)" "`bc <<< $END-$START`" 
-	else
-		report "setup_nfs_mount()" $RC "Failed:(" "`bc <<< $END-$START`"
-	fi
-}
 
 install_nfs_server()
 {

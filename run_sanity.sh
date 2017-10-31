@@ -1,12 +1,13 @@
 #!/bin/sh
-CSI_BASE_DIR="/opt/vhosts/csi"
+CSI_BASE_DIR=`dirname $0`
 RPM_CLUS_LIST="$CSI_BASE_DIR/rpm_cluster_members"
 DEB_CLUS_LIST="$CSI_BASE_DIR/deb_cluster_members"
 KALTURA_BASE="/opt/kaltura"
-CSI_WEB_IF_HOST=
-CSI_CLIENT_GENERATING_HOST=
+CSI_WEB_IF_HOST=""
+TEST_CLIENTS=""
+CSI_CLIENT_GENERATING_HOST=""
 DB="$CSI_BASE_DIR/db/csi.db"
-ALERTS_ADDR="jess.portnoy@kaltura.com"
+ALERTS_ADDR=""
 rm /tmp/reportme.`date +%d_%m_%Y`.sql
 for i in `cat $RPM_CLUS_LIST`;do
 	if echo $i|grep '#' -q ;then
@@ -79,7 +80,10 @@ SUCCESS=`echo "select count(rc) from csi_log where rc=0 and kaltura_version='$VE
 FAILED=`echo "select count(rc) from csi_log where rc!=0 and kaltura_version='$VERSION';"|sqlite3 $DB`
 echo "insert into success_rates values(NULL,$FAILED,$SUCCESS,'$VERSION');"|sqlite3 $DB
 scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $CSI_BASE_DIR/db/csi.db root@$CSI_WEB_IF_HOST:/opt/vhosts/reports/ci/db 
-MSG=`ssh root@$CSI_CLIENT_GENERATING_HOST -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /usr/local/bin/clientlibs_test.sh`
-if [ $? -ne 0 ];then
+
+if [ -n "$TEST_CLIENTS" ];then
+	MSG=`ssh root@$CSI_CLIENT_GENERATING_HOST -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no /usr/local/bin/clientlibs_test.sh`
+	if [ $? -ne 0 ];then
 		echo $MSG| mail -s "Client lib gen failed" $ALERTS_ADDR
+	fi
 fi
